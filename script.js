@@ -1,4 +1,3 @@
-// Inicializa AOS
 AOS.init({ duration: 1000 });
 
 // Contador regressivo
@@ -26,24 +25,33 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// Função de checkout Stripe
-async function comprar(produto) {
+// Inicializa Stripe
+const stripe = Stripe("pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQRooWIMLVjjbjHHtq7lxAMoUw9fc6Q8wY0VgtVTn2004zFVloIo");
+
+// Função para criar checkout
+async function criarCheckout(produto) {
   try {
-    const response = await fetch("https://landing-page-vendas-r8vpwse3w-diego-venancios-projects.vercel.app/api/checkout", {
+    const response = await fetch("https://landing-page-vendas-44l3opp9y-diego-venancios-projects.vercel.app/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ produto })
     });
 
-    const data = await response.json();
+    const session = await response.json();
 
-    if (data.url) {
-      window.location.href = data.url;
+    if (session.id) {
+      await stripe.redirectToCheckout({ sessionId: session.id });
     } else {
-      alert("Erro ao criar checkout. Tente novamente.");
+      alert("Erro ao criar checkout, tente novamente.");
+      console.error(session);
     }
-  } catch (error) {
-    console.error(error);
-    alert("Erro ao processar pagamento.");
+  } catch (err) {
+    alert("Erro na conexão com o servidor.");
+    console.error(err);
   }
 }
+
+// Eventos dos botões
+document.getElementById("btn-ebook").addEventListener("click", ()=>criarCheckout("ebook"));
+document.getElementById("btn-planilhas2").addEventListener("click", ()=>criarCheckout("planilhas2"));
+document.getElementById("btn-planilhas3").addEventListener("click", ()=>criarCheckout("planilhas3"));
