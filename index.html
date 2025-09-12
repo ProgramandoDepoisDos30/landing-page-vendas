@@ -163,16 +163,16 @@
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
-<script src="script.js"></script>
-
 <script>
+  AOS.init();
+
   // Inicializa o Stripe com a chave pública
   const stripe = Stripe("pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQRooWIMLVjjbjHHtq7lxAMoUw9fc6Q8wY0VgtVTn2004zFVloIo");
 
   // Função para criar checkout no backend Vercel
   async function criarCheckout(produto){
     try {
-      const response = await fetch("https://landing-page-vendas-r8vpwse3w-diego-venancios-projects.vercel.app/api/checkout", {
+      const response = await fetch("/api/checkout", {
         method:"POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({ produto })
