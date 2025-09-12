@@ -172,7 +172,7 @@
   // Função para criar checkout no backend Vercel
   async function criarCheckout(produto){
     try {
-      const response = await fetch("/api/checkout", {
+      const response = await fetch("https://landing-page-vendas-44l3opp9y-diego-venancios-projects.vercel.app/api/checkout", {
         method:"POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({ produto })
