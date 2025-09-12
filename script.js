@@ -1,7 +1,7 @@
 // Inicializa AOS
 AOS.init({ duration: 1000 });
 
-// Contador regressivo (3 dias de oferta)
+// Contador regressivo
 const countdown = document.getElementById('countdown');
 const endDate = new Date();
 endDate.setDate(endDate.getDate() + 3);
@@ -26,84 +26,24 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
+// Função de checkout Stripe
+async function comprar(produto) {
+  try {
+    const response = await fetch("https://landing-page-vendas-r8vpwse3w-diego-venancios-projects.vercel.app/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ produto })
+    });
 
-// Avaliações
-const estrelas = document.querySelectorAll("#estrelas .estrela");
-let avaliacaoSelecionada = 0;
+    const data = await response.json();
 
-// Hover e clique das estrelas
-estrelas.forEach((estrela) => {
-  estrela.addEventListener("mouseover", () => {
-    const valor = estrela.dataset.valor;
-    estrelas.forEach(s => s.classList.toggle("cheia", s.dataset.valor <= valor));
-  });
-
-  estrela.addEventListener("click", () => {
-    avaliacaoSelecionada = estrela.dataset.valor;
-  });
-
-  estrela.addEventListener("mouseout", () => {
-    estrelas.forEach(s => s.classList.toggle("cheia", s.dataset.valor <= avaliacaoSelecionada));
-  });
-});
-
-
-// Contador de caracteres do textarea
-const comentarioInput = document.getElementById("comentario");
-const contador = document.createElement("div");
-contador.id = "contador";
-contador.className = "text-sm text-gray-500 mb-2";
-comentarioInput.parentNode.insertBefore(contador, comentarioInput.nextSibling);
-contador.textContent = `0 / 60`;
-
-comentarioInput.addEventListener("input", () => {
-  contador.textContent = `${comentarioInput.value.length} / 60`;
-});
-
-// Formulário e lista de depoimentos
-const formDepoimento = document.getElementById("form-depoimento");
-const listaDepoimentos = document.getElementById("lista-depoimentos");
-let depoimentos = []; // Armazena depoimentos localmente
-
-// Envio do depoimento
-formDepoimento.addEventListener("submit", (e) => {
-  e.preventDefault();
-  
-  const nome = document.getElementById("nome").value.trim();
-  const comentario = comentarioInput.value.trim();
-  const estrelasValor = avaliacaoSelecionada;
-
-  if(!nome || !estrelasValor) {
-    alert("Por favor, preencha seu nome e selecione uma avaliação!");
-    return;
-  }
-
-  if(comentario.length > 60) {
-    alert("Comentário muito longo! Máximo de 60 caracteres.");
-    return;
-  }
-
-  const depoimento = { nome, comentario, estrelas: estrelasValor };
-  depoimentos.push(depoimento);
-  atualizarLista();
-
-  formDepoimento.reset();
-  contador.textContent = "0 / 60";
-  avaliacaoSelecionada = 0;
-  estrelas.forEach(s => s.classList.remove("cheia"));
-});
-
-// Atualiza a lista de depoimentos
-function atualizarLista() {
-  listaDepoimentos.innerHTML = depoimentos.map(d => {
-    let estrelasHTML = "";
-    for(let i=1; i<=5; i++){
-      estrelasHTML += `<span class="estrela ${i <= d.estrelas ? "cheia" : ""} text-2xl">&#9733;</span>`;
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert("Erro ao criar checkout. Tente novamente.");
     }
-    return `<div class="bg-white p-4 rounded-xl shadow-md text-left">
-              <div class="flex items-center mb-2">${estrelasHTML}</div>
-              <p class="font-bold mb-1">${d.nome}</p>
-              <p>${d.comentario}</p>
-            </div>`;
-  }).join("");
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao processar pagamento.");
+  }
 }

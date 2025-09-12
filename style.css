@@ -1,18 +1,24 @@
+/* Geral */
 body {
   scroll-behavior: smooth;
+  font-family: sans-serif;
 }
 
+/* Parallax */
 .parallax {
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
 }
 
+/* Contador */
 .countdown {
   font-weight: bold;
   font-size: 1.5rem;
+  color: white;
 }
 
+/* Cards hover */
 .card-hover:hover {
   transform: translateY(-10px);
   transition: all 0.5s ease;
@@ -22,21 +28,25 @@ body {
 .planos-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 30px; /* espaço entre os cards */
-  max-width: 1000px; /* largura máxima do container */
-  margin: 0 auto; /* centraliza container */
-  padding: 0 20px; /* respiro lateral */
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .planos-container .card {
-  max-width: 280px;   /* largura máxima do card */
-  margin: 0 auto;     /* centraliza cada card */
-  padding: 20px;      /* espaçamento interno */
-  border: 2px solid #007bff; /* borda azul em todos */
-  border-radius: 12px; /* cantos arredondados */
-  position: relative; /* necessário pro selo "Popular" */
-  background: #fff;   /* fundo branco */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 280px;
+  margin: 0 auto;
+  padding: 30px;
+  border: 2px solid #007bff;
+  border-radius: 12px;
+  position: relative;
+  background: #fff;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .planos-container .card h3 {
@@ -52,7 +62,7 @@ body {
   padding-left: 18px;
 }
 
-/* Selos diferentes para cada card */
+/* Selos */
 .selo-basico::before,
 .selo-intermediario::before,
 .selo-completo::before {
@@ -69,71 +79,44 @@ body {
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Conteúdo específico */
-.selo-basico::before {
-  content: "Básico";
-}
+.selo-basico::before { content: "Básico"; }
+.selo-intermediario::before { content: "Intermediário"; }
+.selo-completo::before { content: "Completo"; }
 
-.selo-intermediario::before {
-  content: "Intermediário";
-}
-
-.selo-completo::before {
-  content: "Completo";
-}
-
-/* Faz com que o card seja um flex container vertical */
-.planos-container .card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* empurra o botão para o final */
-  max-width: 280px;
-  margin: 0 auto;
-  padding: 30px;
-  border: 2px solid #007bff;
-  border-radius: 12px;
-  position: relative;
-  background: #fff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-
-/* Card hover geral */
-.planos-container .card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* empurra botão para o final */
-  max-width: 280px;
-  margin: 0 auto;
-  padding: 30px;
-  border: 2px solid #007bff;
-  border-radius: 12px;
-  position: relative;
-  background: #fff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* adiciona transição suave */
-}
-
-/* Hover efeito de destaque */
+/* Hover efeito plano */
 .planos-container .card:hover {
-  transform: translateY(-10px) scale(1.05); /* levanta e aumenta levemente */
-  box-shadow: 0 12px 25px rgba(0,0,0,0.2); /* sombra mais intensa */
-  border-color: #0056b3; /* opcional: muda a cor da borda no hover */
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+  border-color: #0056b3;
 }
-
 
 /* Estrelas de avaliação */
 .estrela {
   transition: color 0.2s;
+  cursor: pointer;
 }
 
 .estrela.cheia {
-  color: #fbbf24; /* amarelo */
+  color: #fbbf24;
 }
 
-/* Contador de caracteres */
+/* Contador de caracteres do textarea */
 #contador {
   text-align: right;
   font-size: 0.875rem;
   color: #555;
+}
+
+/* Botão fixo CTA */
+a.fixed {
+  z-index: 50;
+}
+
+/* Footer */
+footer {
+  background-color: #1f2937; /* bg-gray-800 */
+  color: #d1d5db; /* text-gray-300 */
+  padding: 1.5rem 0;
+  text-align: center;
+  font-size: 0.95rem;
 }
