@@ -2,7 +2,7 @@
 import Stripe from "stripe";
 
 // 🚨 Garante que a chave existe antes de prosseguir
-if (!process.env.STRIPE_SECRET_KEY) {
+if (!process.env.CHAVE_SECRETA_DA_FAIXA) {
   throw new Error("⚠️ Variável STRIPE_SECRET_KEY não encontrada no ambiente do Vercel!");
 }
 
