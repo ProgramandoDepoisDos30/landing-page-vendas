@@ -6,7 +6,7 @@ if (!process.env.CHAVE_SECRETA_DA_FAIXA) {
   throw new Error("⚠️ Variável STRIPE_SECRET_KEY não encontrada no ambiente do Vercel!");
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(process.env.CHAVE_SECRETA_DA_FAIXA, {
   apiVersion: "2023-10-16",
 });
 
