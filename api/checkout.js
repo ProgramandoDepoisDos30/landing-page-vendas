@@ -1,7 +1,7 @@
 // api/checkout.js
 import Stripe from "stripe";
 
-// 🔒 Substitua pela sua **chave secreta** do Stripe (não use a chave pública!)
+// 🔒 Pega a chave secreta do Stripe da variável de ambiente (configurada no Vercel)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
@@ -9,11 +9,11 @@ export default async function handler(req, res) {
     try {
       const { produto } = req.body;
 
-      // 🔹 Price IDs do Stripe para cada produto
+      // Defina os Price IDs (do Stripe) de cada produto
       const produtos = {
         ebook: "price_1Rs9nT2Lo3O3SUleb4s6gV43",
         planilhas2: "price_1S6YZB2Lo3O3SUlelY52DkRf",
-        planilhas3: "price_1S6Ybs2Lo3O3SUleudFueBxH"
+        planilhas3: "price_1S6Ybs2Lo3O3SUleudFueBxH",
       };
 
       const precoId = produtos[produto];
