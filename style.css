@@ -1,0 +1,139 @@
+body {
+  scroll-behavior: smooth;
+}
+
+.parallax {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+.countdown {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.card-hover:hover {
+  transform: translateY(-10px);
+  transition: all 0.5s ease;
+}
+
+/* Planos */
+.planos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px; /* espaço entre os cards */
+  max-width: 1000px; /* largura máxima do container */
+  margin: 0 auto; /* centraliza container */
+  padding: 0 20px; /* respiro lateral */
+}
+
+.planos-container .card {
+  max-width: 280px;   /* largura máxima do card */
+  margin: 0 auto;     /* centraliza cada card */
+  padding: 20px;      /* espaçamento interno */
+  border: 2px solid #007bff; /* borda azul em todos */
+  border-radius: 12px; /* cantos arredondados */
+  position: relative; /* necessário pro selo "Popular" */
+  background: #fff;   /* fundo branco */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.planos-container .card h3 {
+  font-size: 1.5rem;
+}
+
+.planos-container .card p {
+  font-size: 1.2rem;
+}
+
+.planos-container .card ul {
+  font-size: 0.95rem;
+  padding-left: 18px;
+}
+
+/* Selos diferentes para cada card */
+.selo-basico::before,
+.selo-intermediario::before,
+.selo-completo::before {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #007bff;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Conteúdo específico */
+.selo-basico::before {
+  content: "Básico";
+}
+
+.selo-intermediario::before {
+  content: "Intermediário";
+}
+
+.selo-completo::before {
+  content: "Completo";
+}
+
+/* Faz com que o card seja um flex container vertical */
+.planos-container .card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* empurra o botão para o final */
+  max-width: 280px;
+  margin: 0 auto;
+  padding: 30px;
+  border: 2px solid #007bff;
+  border-radius: 12px;
+  position: relative;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+
+/* Card hover geral */
+.planos-container .card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* empurra botão para o final */
+  max-width: 280px;
+  margin: 0 auto;
+  padding: 30px;
+  border: 2px solid #007bff;
+  border-radius: 12px;
+  position: relative;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* adiciona transição suave */
+}
+
+/* Hover efeito de destaque */
+.planos-container .card:hover {
+  transform: translateY(-10px) scale(1.05); /* levanta e aumenta levemente */
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2); /* sombra mais intensa */
+  border-color: #0056b3; /* opcional: muda a cor da borda no hover */
+}
+
+
+/* Estrelas de avaliação */
+.estrela {
+  transition: color 0.2s;
+}
+
+.estrela.cheia {
+  color: #fbbf24; /* amarelo */
+}
+
+/* Contador de caracteres */
+#contador {
+  text-align: right;
+  font-size: 0.875rem;
+  color: #555;
+}

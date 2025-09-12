@@ -1,155 +1,195 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seu Código. Seu Treino. Sua Saúde.</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-<style>
-body { scroll-behavior: smooth; }
-.parallax { background-attachment: fixed; background-size: cover; background-position: center; }
-.countdown { font-weight: bold; font-size: 1.5rem; }
-.card-hover:hover { transform: translateY(-10px); transition: all 0.5s ease; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seu Código. Seu Treino. Sua Saúde.</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50 font-sans text-gray-800">
 
-<!-- Hero Section com parallax -->
-<section class="py-32 text-white parallax" style="background-image:url('https://images.pexels.com/photos/3757957/pexels-photo-3757957.jpeg?auto=compress&cs=tinysrgb&w=1600');">
-  <div class="container mx-auto text-center px-4">
-    <h1 class="text-5xl md:text-6xl font-bold mb-6" data-aos="fade-down">Seu Código. Seu Treino. Sua Saúde.</h1>
-    <p class="text-lg md:text-2xl mb-8" data-aos="fade-up">Melhore sua saúde sem sair do mundo do código.</p>
-    <a href="#comprar" class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold hover:bg-yellow-300 transition shadow-lg inline-block" data-aos="zoom-in">Quero meu eBook</a>
-  </div>
-</section>
-
-<!-- Benefícios / O que você vai aprender com animação -->
-<section class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4 text-center">
-    <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">O que você vai aprender com este eBook</h2>
-    <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left">
-      <p data-aos="fade-right">✅ Como cuidar da sua saúde mesmo com rotina de programador</p>
-      <p data-aos="fade-left">✅ Estratégias simples para aliviar dores e melhorar postura</p>
-      <p data-aos="fade-right">✅ Dicas práticas para aumentar disposição e foco</p>
-      <p data-aos="fade-left">✅ Sugestões de treinos para casa ou academia</p>
-      <p data-aos="fade-up">✅ Um plano de ação realista e aplicável</p>
+  <!-- Hero Section -->
+  <section class="py-32 text-white parallax relative" style="background-image:url('esteira.1.jpg');">
+    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+    <div class="container mx-auto text-center px-4 relative z-10">
+      <h1 class="text-4xl md:text-6xl font-bold mb-6" data-aos="fade-down">Seu Código. Seu Treino. Sua Saúde.</h1>
+      <p class="text-lg md:text-2xl mb-8 max-w-2xl mx-auto" data-aos="fade-up">Melhore sua saúde sem sair do mundo do código.</p>
+      <a href="#planos" class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold hover:bg-yellow-300 transition shadow-lg inline-block" data-aos="zoom-in">Quero meu plano</a>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Contador regressivo -->
-<section class="py-20 bg-indigo-600 text-white text-center">
-  <h2 class="text-3xl md:text-4xl font-bold mb-4" data-aos="fade-down">Oferta por tempo limitado!</h2>
-  <p class="mb-8 text-lg md:text-xl" data-aos="fade-up">Garanta seu eBook com preço promocional antes que acabe!</p>
-  <div id="countdown" class="countdown" data-aos="zoom-in">00d : 00h : 00m : 00s</div>
-</section>
-
-<!-- Guia do Programador Saudável com animações nos cards -->
-<section class="py-20 bg-white" data-aos="fade-up">
-  <div class="container mx-auto px-4 text-center">
-    <h2 class="text-3xl font-bold mb-12">Guia do Programador Saudável</h2>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="flip-left">
-        ✅ Transforme sua saúde em apenas 30 dias
-      </div>
-      <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="flip-left" data-aos-delay="200">
-        ✅ Guia prático feito por um programador e educador físico
-      </div>
-      <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="flip-left" data-aos-delay="400">
-        ✅ Mais energia, foco e qualidade de vida
+  <!-- Benefícios -->
+  <section class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">O que você vai aprender com este eBook</h2>
+      <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left text-lg">
+        <p data-aos="fade-right">✅ Como cuidar da sua saúde mesmo com rotina de programador</p>
+        <p data-aos="fade-left">✅ Estratégias simples para aliviar dores e melhorar postura</p>
+        <p data-aos="fade-right">✅ Dicas práticas para aumentar disposição e foco</p>
+        <p data-aos="fade-left">✅ Sugestões de treinos para casa ou academia</p>
+        <p data-aos="fade-up">✅ Um plano de ação realista e aplicável</p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Conteúdo do eBook -->
-<section class="py-20 bg-gray-100" data-aos="fade-up">
-  <div class="container mx-auto px-4 text-center">
-    <h2 class="text-3xl font-bold mb-8">O que você vai encontrar no eBook</h2>
-    <ul class="text-left max-w-3xl mx-auto list-disc list-inside space-y-2">
-      <li>2 treinos funcionais para fazer em casa (sem equipamentos)</li>
-      <li>Plano de 30 dias para sair do sedentarismo</li>
-      <li>Dicas de ergonomia para seu home office</li>
-      <li>Lista de alimentos que aumentam o foco e a energia</li>
-      <li>Técnicas simples para reduzir estresse e cansaço mental</li>
-      <li>Exercícios para fazer sem sair da cadeira</li>
-      <li>Sugestões práticas para montar sua rotina ideal de programador saudável</li>
-    </ul>
-  </div>
-</section>
+  <!-- Contador -->
+  <section class="py-20 bg-indigo-600 text-white text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4" data-aos="fade-down">Oferta por tempo limitado!</h2>
+    <p class="mb-8 text-lg md:text-xl" data-aos="fade-up">Garanta seu eBook com preço promocional antes que acabe!</p>
+    <div id="countdown" class="countdown" data-aos="zoom-in">00d : 00h : 00m : 00s</div>
+  </section>
 
-<!-- Bônus exclusivo com animação -->
-<section class="py-20 bg-yellow-400 text-gray-900 text-center" data-aos="fade-up">
-  <h2 class="text-3xl font-bold mb-4">BÔNUS EXCLUSIVO</h2>
-  <p class="mb-6">Consultoria de Treino Personalizado com Desconto Especial!</p>
-  <p class="mb-6">Valor normal: R$ 179,90</p>
-  <p class="mb-6">Para compradores do eBook: R$ 89,90</p>
-  <a href="https://wa.me/5531975313071?text=Olá%2C" target="_blank" class="bg-white text-gray-900 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition shadow-lg inline-block">Falar no WhatsApp</a>
-</section>
-
-<!-- Depoimentos com animação em cards -->
-<section class="py-20 bg-gray-100 text-center" data-aos="fade-up">
-  <h2 class="text-3xl font-bold mb-12">Depoimentos</h2>
-  <div class="flex flex-wrap justify-center gap-6">
-    <div class="bg-white p-6 rounded-xl shadow-md w-80 card-hover" data-aos="fade-up" data-aos-delay="100">
-      <p class="italic mb-2">“Sempre achei difícil manter a saúde com tantas horas de código. Esse guia foi direto ao ponto e me motivou a mudar!”</p>
-      <span class="font-bold">– João P.</span>
+  <!-- Guia -->
+  <section class="py-20 bg-white" data-aos="fade-up">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-12">Guia do Programador Saudável</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover text-lg" data-aos="flip-left">
+          ✅ Transforme sua saúde em apenas 30 dias
+        </div>
+        <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover text-lg" data-aos="flip-left" data-aos-delay="200">
+          ✅ Guia prático feito por um programador e educador físico
+        </div>
+        <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover text-lg" data-aos="flip-left" data-aos-delay="400">
+          ✅ Mais energia, foco e qualidade de vida
+        </div>
+      </div>
     </div>
-    <div class="bg-white p-6 rounded-xl shadow-md w-80 card-hover" data-aos="fade-up" data-aos-delay="200">
-      <p class="italic mb-2">“Achei que precisaria de uma academia ou muito tempo livre, mas o eBook me mostrou como pequenas mudanças já fazem diferença. Valeu cada centavo.”</p>
-      <span class="font-bold">– Larissa M.</span>
+  </section>
+
+  <!-- Conteúdo do eBook -->
+  <section class="py-20 bg-gray-100" data-aos="fade-up">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-8">O que você vai encontrar no eBook</h2>
+      <ul class="text-left max-w-3xl mx-auto list-disc list-inside space-y-2 text-lg">
+        <li>2 treinos funcionais para fazer em casa (sem equipamentos)</li>
+        <li>Plano de 30 dias para sair do sedentarismo</li>
+        <li>Dicas de ergonomia para seu home office</li>
+        <li>Lista de alimentos que aumentam o foco e a energia</li>
+        <li>Técnicas simples para reduzir estresse e cansaço mental</li>
+        <li>Exercícios para fazer sem sair da cadeira</li>
+        <li>Sugestões práticas para montar sua rotina ideal de programador saudável</li>
+      </ul>
     </div>
-    <div class="bg-white p-6 rounded-xl shadow-md w-80 card-hover" data-aos="fade-up" data-aos-delay="300">
-      <p class="italic mb-2">“Tenho 42 anos e passei a maior parte do tempo sentado programando. Esse guia me fez repensar minha rotina e me ajudou a sair do sedentarismo de um jeito simples.”</p>
-      <span class="font-bold">– Carlos F.</span>
+  </section>
+
+  <!-- Planos -->
+  <section class="py-20 bg-gray-50 text-gray-900 text-center" id="planos" data-aos="fade-up">
+    <h2 class="text-3xl font-bold mb-12">Escolha seu Plano</h2>
+    <div class="planos-container">
+
+      <!-- Plano 1 -->
+      <div class="card selo-basico">
+        <h3 class="font-bold mb-4">eBook</h3>
+        <p class="text-indigo-600 mb-4">R$9,90</p>
+        <ul class="text-left space-y-2 mb-6">
+          <li>✅ Guia completo do programador saudável</li>
+        </ul>
+        <a href="LINK_STRIPE_EBOOK" target="_blank" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition inline-block">Comprar</a>
+      </div>
+
+      <!-- Plano 2 -->
+      <div class="card selo-intermediario">
+        <h3 class="font-bold mb-4">2 Planilhas Personalizadas</h3>
+        <p class="text-indigo-600 mb-4">R$39,90</p>
+        <ul class="text-left space-y-2 mb-6">
+          <li>✅ eBook grátis</li>
+          <li>✅ Treino para realizar em casa ou academia</li>
+        </ul>
+        <a href="LINK_STRIPE_PLANILHAS2" target="_blank" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition inline-block">Comprar</a>
+      </div>
+
+      <!-- Plano 3 -->
+      <div class="card selo-completo">
+        <h3 class="font-bold mb-4">3 Planilhas + Acompanhamento</h3>
+        <p class="text-indigo-600 mb-4">R$79,90</p>
+        <ul class="text-left space-y-2 mb-6">
+          <li>✅ eBook grátis</li>
+          <li>✅ 7 dias de acompanhamento online</li>
+          <li>✅ Treino para realizar em casa ou academia</li>
+        </ul>
+        <a href="LINK_STRIPE_PLANILHAS3" target="_blank" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition inline-block">Comprar</a>
+      </div>
+
     </div>
-  </div>
+
+  </section>
+
+  <!-- Depoimentos -->
+  <section class="py-20 bg-gray-100 text-center" data-aos="fade-up">
+    <h2 class="text-3xl font-bold mb-12">Depoimentos</h2>
+    <div class="flex flex-wrap justify-center gap-6">
+      <div class="bg-white p-6 rounded-xl shadow-md w-80 card-hover" data-aos="fade-up" data-aos-delay="100">
+        <p class="italic mb-2">“Sempre achei difícil manter a saúde com tantas horas de código. Esse guia foi direto ao ponto e me motivou a mudar!”</p>
+        <span class="font-bold">– João P.</span>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-md w-80 card-hover" data-aos="fade-up" data-aos-delay="200">
+        <p class="italic mb-2">“Achei que precisaria de uma academia ou muito tempo livre, mas o eBook me mostrou como pequenas mudanças já fazem diferença. Valeu cada centavo.”</p>
+        <span class="font-bold">– Larissa M.</span>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-md w-80 card-hover" data-aos="fade-up" data-aos-delay="300">
+        <p class="italic mb-2">“Tenho 42 anos e passei a maior parte do tempo sentado programando. Esse guia me fez repensar minha rotina e me ajudou a sair do sedentarismo de um jeito simples.”</p>
+        <span class="font-bold">– Carlos F.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nova seção: Avaliações dos Usuários -->
+<section class="py-20 bg-gray-50 text-gray-900 text-center" id="avaliacoes" data-aos="fade-up">
+  <h2 class="text-3xl font-bold mb-8">Deixe seu Depoimento</h2>
+  
+  <!-- Formulário de avaliação -->
+  <form id="form-depoimento" class="max-w-md mx-auto mb-12 text-left">
+    <label class="block mb-2 font-semibold" for="nome">Nome ou Apelido:</label>
+    <input type="text" id="nome" class="w-full p-2 mb-4 border rounded" placeholder="Seu nome" required>
+
+    <label class="block mb-2 font-semibold">Avaliação:</label>
+    <div class="flex mb-4" id="estrelas">
+      <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="1">★</span>
+      <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="2">★</span>
+      <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="3">★</span>
+      <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="4">★</span>
+      <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="5">★</span>
+    </div>
+
+      <label class="block mb-2 font-semibold" for="comentario">Comentário (máx. 60 caracteres):</label>
+      <textarea id="comentario" rows="2" class="w-full p-2 mb-1 border rounded" placeholder="Escreva seu comentário" maxlength="60"></textarea>
+
+
+
+    <button type="submit" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition inline-block">Enviar Depoimento</button>
+  </form>
+
+  <!-- Lista de avaliações -->
+  <div id="lista-depoimentos" class="max-w-3xl mx-auto space-y-6"></div>
 </section>
 
-<!-- Compra / CTA final -->
-<section id="comprar" class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-20 text-center" data-aos="zoom-in">
-  <h2 class="text-3xl md:text-4xl font-bold mb-4">Garanta seu eBook agora mesmo</h2>
-  <p class="mb-8 text-lg md:text-xl max-w-xl mx-auto">Valor promocional: R$ 14,90 | Compra 100% segura via Stripe</p>
-  <a href="https://buy.stripe.com/fZucMY8Hx2Xs2kS9qs0gw00" target="_blank" class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold hover:bg-yellow-300 transition shadow-lg inline-block">
-    Comprar Agora
+
+  <!-- CTA Final -->
+  <section class="relative bg-cover bg-center py-20 text-white text-center" style="background-image:url('esteira.3.jpg');">
+    <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+    <div class="relative z-10 container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Garanta seu plano agora mesmo</h2>
+      <p class="mb-8 text-lg md:text-xl max-w-xl mx-auto">Escolha entre eBook, Planilhas ou Acompanhamento — tudo 100% seguro via Stripe</p>
+      <a href="#planos" class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold hover:bg-yellow-300 transition shadow-lg inline-block">Ver Planos</a>
+    </div>
+  </section>
+
+  <!-- Botão fixo CTA -->
+  <a href="#planos" class="fixed bottom-6 right-6 bg-yellow-400 text-gray-900 px-6 py-3 rounded-full font-bold shadow-lg hover:bg-yellow-300 transition z-50">
+    Quero meu eBook
   </a>
-</section>
 
-<!-- Botão fixo CTA -->
-<a href="#comprar" class="fixed bottom-6 right-6 bg-yellow-400 text-gray-900 px-6 py-3 rounded-full font-bold shadow-lg hover:bg-yellow-300 transition z-50">
-  Quero meu eBook
-</a>
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-300 py-6 text-center">
+    <p>© 2025 Diego Venâncio. Todos os direitos reservados.</p>
+  </footer>
 
-<!-- Footer -->
-<footer class="bg-gray-800 text-gray-300 py-6 text-center">
-  <p>© 2025 Diego Venâncio. Todos os direitos reservados.</p>
-</footer>
-
-<!-- Scripts -->
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-AOS.init({ duration: 1000 });
-
-// Contador regressivo
-const countdown = document.getElementById('countdown');
-const endDate = new Date();
-endDate.setDate(endDate.getDate() + 3); // 3 dias de oferta
-
-function updateCountdown() {
-  const now = new Date();
-  const diff = endDate - now;
-  if(diff <= 0){ countdown.innerHTML = "Oferta encerrada"; return; }
-  const days = Math.floor(diff / (1000*60*60*24));
-  const hours = Math.floor((diff / (1000*60*60)) % 24);
-  const minutes = Math.floor((diff / (1000*60)) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-  countdown.innerHTML = `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
-}
-setInterval(updateCountdown, 1000);
-updateCountdown();
-</script>
-
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
