@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import 'dotenv/config'; // Adicione isso no topo
 
 // Inicializa Stripe
 if (!process.env.CHAVE_SECRETA_DA_FAIXA) {
