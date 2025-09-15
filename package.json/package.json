@@ -1,0 +1,9 @@
+{
+  "name": "landing-page-vendas",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "stripe": "^14.0.0"
+  }
+}

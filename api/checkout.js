@@ -7,9 +7,11 @@ if (!process.env.CHAVE_SECRETA_DA_FAIXA) {
 }
 
 // Inicializa o Stripe com a chave secreta
+const Stripe = require("stripe");
 const stripe = new Stripe(process.env.CHAVE_SECRETA_DA_FAIXA, {
   apiVersion: "2023-10-16",
 });
+
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
