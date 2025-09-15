@@ -31,11 +31,12 @@ const stripe = Stripe("pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQ
 // Função para criar checkout
 async function criarCheckout(produto) {
   try {
-    const response = await fetch("https://landing-page-vendas-44l3opp9y-diego-venancios-projects.vercel.app/api/checkout", {
+    const response = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ produto })
     });
+
 
     const session = await response.json();
 
