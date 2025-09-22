@@ -1,30 +1,98 @@
-/* Geral */
+/* =========================
+   Geral
+========================= */
 body {
   scroll-behavior: smooth;
   font-family: sans-serif;
 }
 
-/* Parallax */
+/* =========================
+   Hero Section (Imagem Responsiva)
+========================= */
+.hero-section {
+  position: relative;
+  width: 100%;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.hero-section img {
+  width: 100%;
+  height: auto;
+  max-height: 100vh;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5); /* camada escura */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  color: white;
+}
+
+.hero-overlay h1 {
+  font-size: clamp(1.8rem, 4vw, 3.5rem);
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.hero-overlay p {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.hero-overlay a {
+  background: #fbbf24; /* amarelo */
+  color: #111827; /* cinza-900 */
+  padding: 0.8rem 2rem;
+  border-radius: 9999px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.hero-overlay a:hover {
+  background: #fcd34d;
+}
+
+/* =========================
+   Parallax
+========================= */
 .parallax {
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
 }
 
-/* Contador */
+/* =========================
+   Contador
+========================= */
 .countdown {
   font-weight: bold;
   font-size: 1.5rem;
   color: white;
 }
 
-/* Cards hover */
+/* =========================
+   Cards Hover
+========================= */
 .card-hover:hover {
   transform: translateY(-10px);
   transition: all 0.5s ease;
 }
 
-/* Planos */
+/* =========================
+   Planos
+========================= */
 .planos-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -62,7 +130,9 @@ body {
   padding-left: 18px;
 }
 
-/* Selos */
+/* =========================
+   Selos
+========================= */
 .selo-basico::before,
 .selo-intermediario::before,
 .selo-completo::before {
@@ -90,7 +160,9 @@ body {
   border-color: #0056b3;
 }
 
-/* Estrelas de avaliação */
+/* =========================
+   Estrelas de Avaliação
+========================= */
 .estrela {
   transition: color 0.2s;
   cursor: pointer;
@@ -100,19 +172,25 @@ body {
   color: #fbbf24;
 }
 
-/* Contador de caracteres do textarea */
+/* =========================
+   Contador de caracteres
+========================= */
 #contador {
   text-align: right;
   font-size: 0.875rem;
   color: #555;
 }
 
-/* Botão fixo CTA */
+/* =========================
+   Botão fixo CTA
+========================= */
 a.fixed {
   z-index: 50;
 }
 
-/* Footer */
+/* =========================
+   Footer
+========================= */
 footer {
   background-color: #1f2937; /* bg-gray-800 */
   color: #d1d5db; /* text-gray-300 */
