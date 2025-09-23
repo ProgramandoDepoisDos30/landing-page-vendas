@@ -1,7 +1,8 @@
 // =======================
 // Inicialização Firebase
 // =======================
-const db = firebase.firestore(); // já inicializado no seu HTML
+const db = firebase.firestore(); 
+console.log("Firebase inicializado?", db);
 
 // =======================
 // Contador Persistente
@@ -92,7 +93,12 @@ function renderizarDepoimentos(depoimentos) {
         btn.addEventListener('click', async (e) => {
             const id = e.target.dataset.id;
             if (confirm('Deseja realmente excluir este comentário?')) {
-                await db.collection('depoimentos').doc(id).delete();
+                try {
+                    await db.collection('depoimentos').doc(id).delete();
+                } catch (error) {
+                    console.error("Erro ao excluir:", error);
+                    alert("Erro ao excluir comentário.");
+                }
             }
         });
     });
@@ -131,8 +137,8 @@ form.addEventListener('submit', async (e) => {
         });
 
     } catch (error) {
+        console.error("Erro ao enviar:", error);
         alert("Erro ao enviar comentário.");
-        console.error(error);
     }
 });
 
