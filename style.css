@@ -3,11 +3,12 @@
 ========================= */
 body {
   scroll-behavior: smooth;
-  font-family: sans-serif;
+  font-family: 'Helvetica', sans-serif;
+  background-color: #f9fafb;
 }
 
 /* =========================
-   Hero Section (Imagem Responsiva)
+   Hero Section
 ========================= */
 .hero-section {
   position: relative;
@@ -30,47 +31,56 @@ body {
   background: rgba(0, 0, 0, 0.5); /* camada escura */
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   text-align: center;
   padding: 1rem;
   color: white;
 }
 
 .hero-overlay h1 {
-  font-size: clamp(1.8rem, 4vw, 3.5rem);
+  font-size: clamp(2rem, 5vw, 4rem);
   font-weight: bold;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .hero-overlay p {
   font-size: clamp(1rem, 2vw, 1.5rem);
   margin-bottom: 2rem;
   max-width: 600px;
+  line-height: 1.5;
 }
 
 .hero-overlay a {
-  background: #fbbf24; /* amarelo */
-  color: #111827; /* cinza-900 */
+  background: #fbbf24;
+  color: #111827;
   padding: 0.8rem 2rem;
   border-radius: 9999px;
   font-weight: bold;
   text-decoration: none;
-  transition: background 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .hero-overlay a:hover {
   background: #fcd34d;
+  transform: scale(1.05);
 }
 
 /* =========================
-   Parallax
+   Benefícios
 ========================= */
-.parallax {
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
+.grid .card-hover {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.grid .card-hover:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 16px 30px rgba(0,0,0,0.15);
 }
 
 /* =========================
@@ -78,16 +88,61 @@ body {
 ========================= */
 .countdown {
   font-weight: bold;
-  font-size: 1.5rem;
-  color: white;
+  font-size: 2rem;
+  color: #ffeb3b; /* amarelo para destaque */
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
 
+
 /* =========================
-   Cards Hover
+   Produtos
 ========================= */
-.card-hover:hover {
-  transform: translateY(-10px);
-  transition: all 0.5s ease;
+.produtos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.produto-card {
+  border: 2px solid #007bff;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.produto-card h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.produto-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.produto-card ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin-top: 10px;
+  color: #374151;
+}
+
+.produto-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 16px 30px rgba(0,0,0,0.15);
+  border-color: #0056b3;
+}
+
+.produto-card.destaque {
+  border: 3px solid #fbbf24;
 }
 
 /* =========================
@@ -95,7 +150,7 @@ body {
 ========================= */
 .planos-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
   max-width: 1000px;
   margin: 0 auto;
@@ -103,36 +158,24 @@ body {
 }
 
 .planos-container .card {
+  position: relative; /* necessário para os selos ::before */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  max-width: 280px;
-  margin: 0 auto;
-  padding: 30px;
-  border: 2px solid #007bff;
-  border-radius: 12px;
-  position: relative;
   background: #fff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 2px solid #007bff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.planos-container .card h3 {
-  font-size: 1.5rem;
+.planos-container .card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(0,0,0,0.2);
+  border-color: #0056b3;
 }
 
-.planos-container .card p {
-  font-size: 1.2rem;
-}
-
-.planos-container .card ul {
-  font-size: 0.95rem;
-  padding-left: 18px;
-}
-
-/* =========================
-   Selos
-========================= */
 .selo-basico::before,
 .selo-intermediario::before,
 .selo-completo::before {
@@ -153,16 +196,26 @@ body {
 .selo-intermediario::before { content: "Intermediário"; }
 .selo-completo::before { content: "Completo"; }
 
-/* Hover efeito plano */
-.planos-container .card:hover {
-  transform: translateY(-10px) scale(1.05);
-  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
-  border-color: #0056b3;
-}
 
 /* =========================
-   Estrelas de Avaliação
+   Preço dos Planos
 ========================= */
+.planos-container .card p.text-indigo-600 {
+  font-size: 2rem; /* aumenta o tamanho do valor */
+  font-weight: bold;
+}
+
+
+/* =========================
+   Depoimentos
+========================= */
+#form-depoimento input,
+#form-depoimento textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
 .estrela {
   transition: color 0.2s;
   cursor: pointer;
@@ -173,12 +226,22 @@ body {
 }
 
 /* =========================
-   Contador de caracteres
+   CTA Final
 ========================= */
-#contador {
-  text-align: right;
-  font-size: 0.875rem;
-  color: #555;
+.relative.bg-cover {
+  position: relative;
+}
+
+.relative.bg-cover .container {
+  position: relative;
+  z-index: 10;
+}
+
+.relative.bg-cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
 }
 
 /* =========================
@@ -186,15 +249,50 @@ body {
 ========================= */
 a.fixed {
   z-index: 50;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+a.fixed:hover {
+  transform: scale(1.05);
+  background: #fcd34d;
 }
 
 /* =========================
    Footer
 ========================= */
 footer {
-  background-color: #1f2937; /* bg-gray-800 */
-  color: #d1d5db; /* text-gray-300 */
+  background-color: #1f2937;
+  color: #d1d5db;
   padding: 1.5rem 0;
   text-align: center;
   font-size: 0.95rem;
 }
+
+/* =========================
+   Avatar
+========================= */
+.avatar-container {
+  width: 8rem; /* 32px * 8 = 256px (igual ao w-32) */
+  height: 8rem;
+  margin: 0 auto;
+  border-radius: 9999px; /* deixa redondo */
+  overflow: hidden;
+  background-color: #000; /* fundo preto */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* sombra suave */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* mantém o círculo preenchido */
+  object-position: center 60%; /* ajusta verticalmente: 60% desce um pouco a imagem */
+}
+
+
+.scale-0 { transform: scale(0); opacity: 0; }
+.scale-100 { transform: scale(1); opacity: 1; }
+.transition-transform { transition: transform 0.5s ease, opacity 0.5s ease; }
+

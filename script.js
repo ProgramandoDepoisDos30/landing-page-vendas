@@ -1,58 +1,132 @@
-AOS.init({ duration: 1000 });
+// =======================
+// Contador Persistente
+// =======================
+const countdown = document.getElementById('countdown-geral');
+const contadorKey = 'contadorOficial';
 
-// Contador regressivo
-const countdown = document.getElementById('countdown');
-const endDate = new Date();
-endDate.setDate(endDate.getDate() + 3);
+const tempoFase1 = 2*3600 + 59*60 + 59; // 2h 59m 59s
+const tempoFase2 = 9*60 + 59;           // 9m 59s
 
-function updateCountdown() {
-  const now = new Date();
-  const diff = endDate - now;
+let estado = JSON.parse(localStorage.getItem(contadorKey)) || { fase: 1, segundosRestantes: tempoFase1 };
 
-  if (diff <= 0) {
-    countdown.innerHTML = "Oferta encerrada";
-    return;
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-
-  countdown.innerHTML = `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
+function formatTime(totalSegundos) {
+    const h = Math.floor(totalSegundos / 3600);
+    const m = Math.floor((totalSegundos % 3600) / 60);
+    const s = totalSegundos % 60;
+    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
-setInterval(updateCountdown, 1000);
-updateCountdown();
-
-// Inicializa Stripe
-const stripe = Stripe("pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQRooWIMLVjjbjHHtq7lxAMoUw9fc6Q8wY0VgtVTn2004zFVloIo");
-
-// Função para criar checkout
-async function criarCheckout(produto) {
-  try {
-    const response = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ produto })
-    });
-
-
-    const session = await response.json();
-
-    if (session.id) {
-      await stripe.redirectToCheckout({ sessionId: session.id });
-    } else {
-      alert("Erro ao criar checkout, tente novamente.");
-      console.error(session);
+function atualizarContador() {
+    if (estado.fase === 1 || estado.fase === 2) {
+        if (estado.segundosRestantes > 0) {
+            estado.segundosRestantes--;
+        } else {
+            if (estado.fase === 1) {
+                countdown.innerHTML = "O tempo da sua oferta acabou, mas vou liberar essa condição por pouco tempo ainda!";
+                estado.fase = 2;
+                estado.segundosRestantes = tempoFase2;
+                localStorage.setItem(contadorKey, JSON.stringify(estado));
+                clearInterval(interval);
+                setTimeout(() => {
+                    interval = setInterval(atualizarContador, 1000);
+                }, 3000);
+                return;
+            } else if (estado.fase === 2) {
+                countdown.innerHTML = "Oferta Encerrada!";
+                clearInterval(interval);
+                return;
+            }
+        }
     }
-  } catch (err) {
-    alert("Erro na conexão com o servidor.");
-    console.error(err);
-  }
+    countdown.innerHTML = formatTime(estado.segundosRestantes);
+    localStorage.setItem(contadorKey, JSON.stringify(estado));
 }
 
-// Eventos dos botões
-document.getElementById("btn-ebook").addEventListener("click", ()=>criarCheckout("ebook"));
-document.getElementById("btn-planilhas2").addEventListener("click", ()=>criarCheckout("planilhas2"));
-document.getElementById("btn-planilhas3").addEventListener("click", ()=>criarCheckout("planilhas3"));
+let interval = setInterval(atualizarContador, 1000);
+atualizarContador();
+
+// =======================
+// Depoimentos Persistentes em Tempo Real
+// =======================
+const form = document.getElementById('form-depoimento');
+const listaDepoimentos = document.getElementById('lista-depoimentos');
+let estrelasSelecionadas = 0;
+
+// Seleção de estrelas
+document.querySelectorAll('.estrela').forEach(star => {
+    star.addEventListener('click', () => {
+        estrelasSelecionadas = parseInt(star.dataset.valor);
+        document.querySelectorAll('.estrela').forEach(s => {
+            s.classList.remove('text-yellow-400');
+            s.classList.add('text-gray-300');
+        });
+        for (let i = 0; i < estrelasSelecionadas; i++) {
+            document.querySelectorAll('.estrela')[i].classList.add('text-yellow-400');
+            document.querySelectorAll('.estrela')[i].classList.remove('text-gray-300');
+        }
+    });
+});
+
+// Função para renderizar depoimentos
+function renderizarDepoimentos(snapshot) {
+    listaDepoimentos.innerHTML = '';
+    snapshot.forEach(docSnap => {
+        const dep = docSnap.data();
+        const div = document.createElement('div');
+        div.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow-md', 'relative');
+        div.dataset.id = docSnap.id;
+        div.innerHTML = `
+            <p class="font-bold">${dep.nome} <span class="text-yellow-400">${'★'.repeat(dep.estrelas)}</span></p>
+            <p>${dep.comentario}</p>
+            <button class="excluir absolute top-2 right-2 text-red-500 font-bold hover:text-red-700">✖</button>
+        `;
+        listaDepoimentos.appendChild(div);
+
+        div.querySelector('.excluir').addEventListener('click', () => {
+            if(confirm('Deseja realmente excluir este comentário?')) {
+                db.collection("depoimentos").doc(div.dataset.id).delete();
+            }
+        });
+    });
+}
+
+// Observa alterações em tempo real
+db.collection("depoimentos")
+  .orderBy("criadoEm", "desc")
+  .onSnapshot(snapshot => {
+      renderizarDepoimentos(snapshot);
+  });
+
+// Envio de depoimento
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nome = document.getElementById('nome').value.trim();
+    const comentario = document.getElementById('comentario').value.trim();
+
+    if (!nome || !comentario || estrelasSelecionadas === 0) {
+        alert("Preencha todos os campos e selecione uma avaliação.");
+        return;
+    }
+
+    db.collection("depoimentos").add({
+        nome,
+        comentario,
+        estrelas: estrelasSelecionadas,
+        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        form.reset();
+        estrelasSelecionadas = 0;
+        document.querySelectorAll('.estrela').forEach(s => {
+            s.classList.remove('text-yellow-400');
+            s.classList.add('text-gray-300');
+        });
+    }).catch(err => {
+        console.error(err);
+        alert("Erro ao enviar comentário.");
+    });
+});
+
+// =======================
+// Inicializa AOS
+// =======================
+AOS.init();

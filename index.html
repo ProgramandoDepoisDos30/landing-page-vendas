@@ -12,91 +12,96 @@
 <body class="bg-gray-50 font-sans text-gray-800">
 
 <!-- Hero Section -->
-<section class="hero-section">
+<section class="hero-section relative">
   <img src="esteira.1.jpg" alt="Treino saudável para programadores">
-  <div class="hero-overlay">
-    <h1>Seu Código. Seu Treino. Sua Saúde.</h1>
-    <p>Melhore sua saúde sem sair do mundo do código.</p>
-    <a href="#planos">Quero meu plano</a>
+  <div class="hero-overlay flex flex-col justify-center items-center text-center">
+    <h1 class="font-bold text-white text-4xl md:text-5xl mb-4" data-aos="fade-down">Transforme seu Corpo e sua Mente!</h1>
+    <p class="text-white text-lg md:text-xl max-w-xl mb-6" data-aos="fade-up">Descubra como programadores estão cuidando da saúde, aumentando foco e energia mesmo com rotinas apertadas.</p>
+    <a href="#planos" class="bg-yellow-400 text-gray-900 px-8 py-3 rounded-full font-bold hover:bg-yellow-300 shadow-lg transition" data-aos="zoom-in">Quero começar agora</a>
   </div>
 </section>
 
-
-
-<!-- Benefícios -->
-<section class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4 text-center">
-    <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">O que você vai aprender com este eBook</h2>
-    <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left text-lg">
-      <p data-aos="fade-right">✅ Como cuidar da sua saúde mesmo com rotina de programador</p>
-      <p data-aos="fade-left">✅ Estratégias simples para aliviar dores e melhorar postura</p>
-      <p data-aos="fade-right">✅ Dicas práticas para aumentar disposição e foco</p>
-      <p data-aos="fade-left">✅ Sugestões de treinos para casa ou academia</p>
-      <p data-aos="fade-up">✅ Um plano de ação realista e aplicável</p>
+<!-- Benefícios gerais -->
+<section class="py-20 bg-gray-50 text-center">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">Escolha seu caminho para saúde e produtividade</h2>
+    <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up">
+        <i class="fas fa-book text-indigo-600 text-3xl mb-4"></i>
+        <h3 class="font-bold text-xl mb-2">Aprenda com o eBook</h3>
+        <p>Descubra dicas práticas de postura, treinos rápidos e alimentação para programadores.</p>
+      </div>
+      <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up" data-aos-delay="200">
+        <i class="fas fa-dumbbell text-indigo-600 text-3xl mb-4"></i>
+        <h3 class="font-bold text-xl mb-2">Treinos Personalizados</h3>
+        <p>Planilhas adaptadas ao seu corpo e rotina para resultados rápidos e eficientes.</p>
+      </div>
+      <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up" data-aos-delay="400">
+        <i class="fas fa-user-check text-indigo-600 text-3xl mb-4"></i>
+        <h3 class="font-bold text-xl mb-2">Acompanhamento Profissional</h3>
+        <p>Suporte direto para ajustar treinos, tirar dúvidas e garantir evolução contínua.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Contador -->
+<!-- Contador geral -->
 <section class="py-20 bg-indigo-600 text-white text-center">
-  <h2 class="text-3xl md:text-4xl font-bold mb-4" data-aos="fade-down">Oferta por tempo limitado!</h2>
-  <p class="mb-8 text-lg md:text-xl" data-aos="fade-up">Garanta seu eBook com preço promocional antes que acabe!</p>
-  <div id="countdown" class="countdown" data-aos="zoom-in">00d : 00h : 00m : 00s</div>
+  <h2 class="text-3xl md:text-4xl font-bold mb-4" data-aos="fade-down">⏰ Oferta Especial por Tempo Limitado!</h2>
+  <p class="mb-8 text-lg md:text-xl" data-aos="fade-up">Garanta seu plano agora e transforme sua saúde antes que a promoção acabe!</p>
+
+  <div id="countdown-geral" class="countdown text-3xl font-bold"></div>
 </section>
 
-<!-- Guia -->
-<section class="py-20 bg-white" data-aos="fade-up">
-  <div class="container mx-auto px-4 text-center">
-    <h2 class="text-3xl font-bold mb-12">Guia do Programador Saudável</h2>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover text-lg" data-aos="flip-left">
-        ✅ Transforme sua saúde em apenas 30 dias
+<!-- Seção Sobre o Autor -->
+<section class="py-20 bg-gray-50 text-gray-900" data-aos="fade-up">
+  <div class="container mx-auto px-4 max-w-4xl text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-6">Sobre o Autor</h2>
+    <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+      <!-- Avatar com fundo preto -->
+      <div class="w-48 h-48 mx-auto md:mx-0 rounded-full overflow-hidden bg-black shadow-lg flex items-center justify-center">
+        <img src="avatar.png" alt="Avatar do autor" class="w-full h-full object-cover">
       </div>
-      <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover text-lg" data-aos="flip-left" data-aos-delay="200">
-        ✅ Guia prático feito por um programador e educador físico
-      </div>
-      <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover text-lg" data-aos="flip-left" data-aos-delay="400">
-        ✅ Mais energia, foco e qualidade de vida
+      <!-- Texto de autoridade -->
+      <div class="flex-1 text-left">
+        <p class="text-lg md:text-xl mb-4 leading-relaxed">
+          💪 Com <span class="font-bold">mais de 8 anos de experiência</span> como Personal Trainer e formado em <span class="font-bold">Educação Física</span>, eu agora aplico todo meu conhecimento no universo da programação.
+        </p>
+        <p class="text-lg md:text-xl mb-4 leading-relaxed">
+          🖥️ Entendo de perto os desafios de quem passa horas diante do computador e criei soluções práticas para <span class="text-yellow-400 font-bold">melhorar postura, energia e bem-estar de programadores</span>.
+        </p>
+        <p class="text-lg md:text-xl leading-relaxed">
+          ✅ Aqui você encontra orientação profissional baseada em ciência e experiência real, adaptada para quem quer evoluir no código sem descuidar da saúde.
+        </p>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- Conteúdo do eBook -->
-<section class="py-20 bg-gray-100" data-aos="fade-up">
-  <div class="container mx-auto px-4 text-center">
-    <h2 class="text-3xl font-bold mb-8">O que você vai encontrar no eBook</h2>
-    <ul class="text-left max-w-3xl mx-auto list-disc list-inside space-y-2 text-lg">
-      <li>2 treinos funcionais para fazer em casa (sem equipamentos)</li>
-      <li>Plano de 30 dias para sair do sedentarismo</li>
-      <li>Dicas de ergonomia para seu home office</li>
-      <li>Lista de alimentos que aumentam o foco e a energia</li>
-      <li>Técnicas simples para reduzir estresse e cansaço mental</li>
-      <li>Exercícios para fazer sem sair da cadeira</li>
-      <li>Sugestões práticas para montar sua rotina ideal de programador saudável</li>
-    </ul>
   </div>
 </section>
 
 <!-- Planos -->
 <section class="py-20 bg-gray-50 text-gray-900 text-center" id="planos" data-aos="fade-up">
-  <h2 class="text-3xl font-bold mb-12">Escolha seu Plano</h2>
-  <div class="planos-container">
+  <h2 class="text-3xl font-bold mb-12">Escolha seu Plano Ideal</h2>
+  <div class="planos-container flex flex-col md:flex-row justify-center gap-8">
 
-    <!-- Plano 1 -->
-    <div class="card selo-basico">
+    <!-- Plano 1: eBook -->
+    <div class="card selo-basico border border-gray-200 p-6 rounded-xl shadow-md">
       <h3 class="font-bold mb-4">eBook</h3>
-      <p class="text-indigo-600 mb-4">R$9,90</p>
+      <p class="text-gray-500 line-through mb-2">R$17,00</p>
+      <p class="text-indigo-600 text-2xl font-bold mb-2">R$9,97</p>
+      <p class="text-green-500 font-semibold mb-4">Economize R$7,03!</p>
       <ul class="text-left space-y-2 mb-6">
         <li>✅ Guia completo do programador saudável</li>
       </ul>
       <button id="btn-ebook" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition">Comprar</button>
     </div>
 
-    <!-- Plano 2 -->
-    <div class="card selo-intermediario">
+    <!-- Plano 2: 2 Planilhas Personalizadas -->
+    <div class="card selo-intermediario border-2 border-indigo-600 p-6 rounded-xl shadow-md relative">
+      <div class="absolute top-2 right-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded-full font-bold">Mais Popular</div>
       <h3 class="font-bold mb-4">2 Planilhas Personalizadas</h3>
-      <p class="text-indigo-600 mb-4">R$39,90</p>
+      <p class="text-gray-500 line-through mb-2">R$69,90</p>
+      <p class="text-indigo-600 text-2xl font-bold mb-2">R$36,97</p>
+      <p class="text-green-500 font-semibold mb-4">Economize R$32,93!</p>
       <ul class="text-left space-y-2 mb-6">
         <li>✅ eBook grátis</li>
         <li>✅ Treino para realizar em casa ou academia</li>
@@ -104,14 +109,17 @@
       <button id="btn-planilhas2" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition">Comprar</button>
     </div>
 
-    <!-- Plano 3 -->
-    <div class="card selo-completo">
+    <!-- Plano 3: 3 Planilhas + Acompanhamento -->
+    <div class="card selo-completo border-2 border-red-600 p-6 rounded-xl shadow-md relative">
+      <div class="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold">Vagas Limitadas!</div>
       <h3 class="font-bold mb-4">3 Planilhas + Acompanhamento</h3>
-      <p class="text-indigo-600 mb-4">R$79,90</p>
+      <p class="text-gray-500 line-through mb-2">R$199,90</p>
+      <p class="text-indigo-600 text-2xl font-bold mb-2">R$77,00</p>
+      <p class="text-green-500 font-semibold mb-4">Economize R$122,90!</p>
       <ul class="text-left space-y-2 mb-6">
         <li>✅ eBook grátis</li>
-        <li>✅ 7 dias de acompanhamento online</li>
         <li>✅ Treino para realizar em casa ou academia</li>
+        <li>✅ 7 dias de acompanhamento online</li>
       </ul>
       <button id="btn-planilhas3" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition">Comprar</button>
     </div>
@@ -119,9 +127,10 @@
   </div>
 </section>
 
+
 <!-- Depoimentos -->
 <section class="py-20 bg-gray-50 text-gray-900 text-center" id="avaliacoes" data-aos="fade-up">
-  <h2 class="text-3xl font-bold mb-8">Deixe seu Depoimento</h2>
+  <h2 class="text-3xl font-bold mb-8">Veja como outros programadores estão evoluindo</h2>
   <form id="form-depoimento" class="max-w-md mx-auto mb-12 text-left">
     <label class="block mb-2 font-semibold" for="nome">Nome ou Apelido:</label>
     <input type="text" id="nome" class="w-full p-2 mb-4 border rounded" placeholder="Seu nome" required>
@@ -145,55 +154,62 @@
 </section>
 
 <!-- CTA Final -->
-<section class="relative bg-cover bg-center py-20 text-white text-center" style="background-image:url('esteira.3.jpg');">
-  <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-  <div class="relative z-10 container mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-bold mb-4">Garanta seu plano agora mesmo</h2>
-    <p class="mb-8 text-lg md:text-xl max-w-xl mx-auto">Escolha entre eBook, Planilhas ou Acompanhamento — tudo 100% seguro via Stripe</p>
-    <a href="#planos" class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold hover:bg-yellow-300 transition shadow-lg inline-block">Ver Planos</a>
+<section class="relative bg-cover bg-center py-24 text-white text-center" style="background-image:url('esteira.3.jpg');">
+  <div class="absolute inset-0 bg-black bg-opacity-70"></div>
+  <div class="relative z-10 container mx-auto px-4 max-w-3xl">
+    <h2 class="text-4xl md:text-5xl font-extrabold mb-6" data-aos="fade-up">
+      🚀 Não adie mais sua transformação!
+    </h2>
+    <p class="text-xl md:text-2xl mb-8 leading-relaxed" data-aos="fade-up" data-aos-delay="200">
+      Escolha entre <span class="text-yellow-400 font-bold">eBook</span>, <span class="text-yellow-400 font-bold">Planilhas</span> ou <span class="text-yellow-400 font-bold">Acompanhamento</span> — <br>
+      tudo <span class="text-green-400 font-bold">100% seguro via Stripe</span>.
+    </p>
+    <a href="#planos" class="bg-yellow-400 text-gray-900 px-10 py-4 rounded-full font-extrabold text-lg hover:bg-yellow-300 transition shadow-lg inline-block" data-aos="zoom-in" data-aos-delay="400">
+      Ver Planos
+    </a>
   </div>
 </section>
 
 <!-- Botão fixo -->
 <a href="#planos" class="fixed bottom-6 right-6 bg-yellow-400 text-gray-900 px-6 py-3 rounded-full font-bold shadow-lg hover:bg-yellow-300 transition z-50">
-  Quero meu eBook
+  Quero meu plano
 </a>
 
 <footer class="bg-gray-800 text-gray-300 py-6 text-center">
-  <p>© 2025 Diego Venâncio. Todos os direitos reservados.</p>
+  <p class="mb-1">© 2025 Programando Depois dos 30. Todos os direitos reservados.</p>
+  <p>Confira nossos conteúdos no YouTube: 
+    <a href="https://www.youtube.com/@programandodepoisdos30" target="_blank" class="underline hover:text-yellow-400 transition">Programando Depois dos 30</a>
+  </p>
 </footer>
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
+
+<!-- Firebase App -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<!-- Firebase Firestore -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- Inicialização do Firebase -->
 <script>
-  AOS.init();
+  const firebaseConfig = {
+    apiKey: "AIzaSyDucaT1FMVt1JbmH82l9E-57YbQ4wkaf1s",
+    authDomain: "lading-page-vendas.firebaseapp.com",
+    projectId: "lading-page-vendas",
+    storageBucket: "lading-page-vendas.firebasestorage.app",
+    messagingSenderId: "63320297248",
+    appId: "1:63320297248:web:e04b1d48bd309775f7d145",
+    measurementId: "G-SJRPZ0JKE6"
+  };
 
-  const stripe = Stripe("pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQRooWIMLVjjbjHHtq7lxAMoUw9fc6Q8wY0VgtVTn2004zFVloIo");
-
-  async function criarCheckout(produto){
-    try {
-      const response = await fetch("/api/checkout", {
-        method:"POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ produto })
-      });
-      const session = await response.json();
-      if(session.id){
-        await stripe.redirectToCheckout({ sessionId: session.id });
-      } else {
-        alert("Erro ao criar checkout, tente novamente.");
-        console.error(session);
-      }
-    } catch(err){
-      alert("Erro na conexão com o servidor.");
-      console.error(err);
-    }
-  }
-
-  document.getElementById("btn-ebook").addEventListener("click", ()=>criarCheckout("ebook"));
-  document.getElementById("btn-planilhas2").addEventListener("click", ()=>criarCheckout("planilhas2"));
-  document.getElementById("btn-planilhas3").addEventListener("click", ()=>criarCheckout("planilhas3"));
+  // Inicializa Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 </script>
+
+
+<!-- Seu script principal -->
+<script src="script.js"></script>
 
 </body>
 </html>
