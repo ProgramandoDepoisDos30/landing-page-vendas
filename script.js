@@ -1,17 +1,12 @@
 // =======================
-// Inicialização Firebase
-// =======================
-const db = firebase.firestore(); 
-console.log("Firebase inicializado?", db);
-
-// =======================
 // Contador Persistente
 // =======================
 const countdown = document.getElementById('countdown-geral');
 const contadorKey = 'contadorOficial';
 
-const tempoFase1 = 2*3600 + 59*60 + 59; 
-const tempoFase2 = 9*60 + 59;           
+// Define tempo inicial em segundos
+const tempoFase1 = 2*3600 + 59*60 + 59; // 2h 59m 59s
+const tempoFase2 = 9*60 + 59;           // 9m 59s
 
 let estado = JSON.parse(localStorage.getItem(contadorKey)) || { fase: 1, segundosRestantes: tempoFase1 };
 
@@ -52,7 +47,7 @@ let interval = setInterval(atualizarContador, 1000);
 atualizarContador();
 
 // =======================
-// Depoimentos Firebase
+// Depoimentos Persistentes via Firestore
 // =======================
 const form = document.getElementById('form-depoimento');
 const listaDepoimentos = document.getElementById('lista-depoimentos');
@@ -73,46 +68,39 @@ document.querySelectorAll('.estrela').forEach(star => {
     });
 });
 
-// Função para renderizar depoimentos
-function renderizarDepoimentos(depoimentos) {
+// Renderiza depoimentos do Firestore
+function renderizarDepoimentos() {
     listaDepoimentos.innerHTML = '';
-    depoimentos.forEach(doc => {
-        const data = doc.data();
-        const div = document.createElement('div');
-        div.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow-md', 'relative');
-        div.innerHTML = `
-            <p class="font-bold">${data.nome} <span class="text-yellow-400">${'★'.repeat(data.estrelas)}</span></p>
-            <p>${data.comentario}</p>
-            <button class="excluir absolute top-2 right-2 text-red-500 font-bold hover:text-red-700" data-id="${doc.id}">✖</button>
-        `;
-        listaDepoimentos.appendChild(div);
-    });
+    db.collection("depoimentos").orderBy("criadoEm", "desc").get().then(snapshot => {
+        snapshot.forEach(docSnap => {
+            const dep = docSnap.data();
+            const div = document.createElement('div');
+            div.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow-md', 'relative');
+            div.dataset.id = docSnap.id;
+            div.innerHTML = `
+                <p class="font-bold">${dep.nome} <span class="text-yellow-400">${'★'.repeat(dep.estrelas)}</span></p>
+                <p>${dep.comentario}</p>
+                <button class="excluir absolute top-2 right-2 text-red-500 font-bold hover:text-red-700">✖</button>
+            `;
+            listaDepoimentos.appendChild(div);
 
-    // Evento de exclusão
-    document.querySelectorAll('.excluir').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            const id = e.target.dataset.id;
-            if (confirm('Deseja realmente excluir este comentário?')) {
-                try {
-                    await db.collection('depoimentos').doc(id).delete();
-                } catch (error) {
-                    console.error("Erro ao excluir:", error);
-                    alert("Erro ao excluir comentário.");
+            div.querySelector('.excluir').addEventListener('click', () => {
+                if(confirm('Deseja realmente excluir este comentário?')) {
+                    db.collection("depoimentos").doc(div.dataset.id).delete().then(() => {
+                        renderizarDepoimentos();
+                    });
                 }
-            }
+            });
         });
     });
 }
 
-// Recupera depoimentos do Firestore em tempo real
-db.collection('depoimentos').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-    renderizarDepoimentos(snapshot.docs);
-});
+// Inicializa depoimentos
+renderizarDepoimentos();
 
 // Envio de depoimento
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', (e) => {
     e.preventDefault();
-
     const nome = document.getElementById('nome').value.trim();
     const comentario = document.getElementById('comentario').value.trim();
 
@@ -121,25 +109,23 @@ form.addEventListener('submit', async (e) => {
         return;
     }
 
-    try {
-        await db.collection('depoimentos').add({
-            nome,
-            comentario,
-            estrelas: estrelasSelecionadas,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
+    db.collection("depoimentos").add({
+        nome,
+        comentario,
+        estrelas: estrelasSelecionadas,
+        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
         form.reset();
         estrelasSelecionadas = 0;
         document.querySelectorAll('.estrela').forEach(s => {
             s.classList.remove('text-yellow-400');
             s.classList.add('text-gray-300');
         });
-
-    } catch (error) {
-        console.error("Erro ao enviar:", error);
+        renderizarDepoimentos();
+    }).catch(err => {
+        console.error(err);
         alert("Erro ao enviar comentário.");
-    }
+    });
 });
 
 // =======================
