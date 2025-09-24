@@ -45,7 +45,6 @@ function atualizarContador() {
 let interval = setInterval(atualizarContador, 1000);
 atualizarContador();
 
-
 // =======================
 // Depoimentos Persistentes via Firestore
 // =======================
@@ -127,19 +126,17 @@ form.addEventListener('submit', (e) => {
     });
 });
 
-
 // =======================
 // Inicializa AOS
 // =======================
 AOS.init();
 
-
 // =======================
 // Stripe Checkout
 // =======================
 
-// Coloque sua chave pública do Stripe aqui
-const STRIPE_PUBLISHABLE_KEY = "pk_live_XXXXXXXXXXXXXXXX"; // substitua pela sua
+// Substitua pela sua chave pública correta do Stripe
+const STRIPE_PUBLISHABLE_KEY = "pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQRooWIMLVjjbjHHtq7lxAMoUw9fc6Q8wY0VgtVTn2004zFVloIo"; 
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
 async function criarCheckout(produto, btn) {
