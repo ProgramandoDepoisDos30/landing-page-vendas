@@ -81,14 +81,6 @@ function renderizarDepoimentos() {
                 <p>${dep.comentario}</p>
             `;
             listaDepoimentos.appendChild(div);
-
-            div.querySelector('.excluir').addEventListener('click', () => {
-                if(confirm('Deseja realmente excluir este comentário?')) {
-                    db.collection("comentarios").doc(div.dataset.id).delete().then(() => {
-                        renderizarDepoimentos();
-                    });
-                }
-            });
         });
     });
 }
