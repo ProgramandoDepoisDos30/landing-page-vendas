@@ -79,7 +79,6 @@ function renderizarDepoimentos() {
             div.innerHTML = `
                 <p class="font-bold">${dep.nome} <span class="text-yellow-400">${'★'.repeat(dep.estrelas)}</span></p>
                 <p>${dep.comentario}</p>
-                <button class="excluir absolute top-2 right-2 text-red-500 font-bold hover:text-red-700">✖</button>
             `;
             listaDepoimentos.appendChild(div);
 
