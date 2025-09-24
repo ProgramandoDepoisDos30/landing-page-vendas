@@ -50,6 +50,7 @@ atualizarContador();
 // =======================
 const form = document.getElementById('form-depoimento');
 const listaDepoimentos = document.getElementById('lista-depoimentos');
+const feedbackDiv = document.getElementById('feedback-comentario');
 let estrelasSelecionadas = 0;
 
 // Seleção de estrelas
@@ -81,6 +82,21 @@ function renderizarDepoimentos() {
                 <p>${dep.comentario}</p>
             `;
             listaDepoimentos.appendChild(div);
+
+            // O botão de exclusão não será mostrado para o público geral
+            if (dep.admin === true) { // se quiser marcar admin nos comentários
+                const btnExcluir = document.createElement('button');
+                btnExcluir.textContent = 'X';
+                btnExcluir.classList.add('absolute','top-2','right-2','text-red-600','font-bold','hover:text-red-800');
+                div.appendChild(btnExcluir);
+                btnExcluir.addEventListener('click', () => {
+                    if(confirm('Deseja realmente excluir este comentário?')) {
+                        db.collection("comentarios").doc(div.dataset.id).delete().then(() => {
+                            renderizarDepoimentos();
+                        });
+                    }
+                });
+            }
         });
     });
 }
@@ -93,8 +109,12 @@ form.addEventListener('submit', (e) => {
     const nome = document.getElementById('nome').value.trim();
     const comentario = document.getElementById('comentario').value.trim();
 
+    feedbackDiv.textContent = ''; // limpa feedback
+    feedbackDiv.className = '';
+
     if (!nome || !comentario || estrelasSelecionadas === 0) {
-        alert("Preencha todos os campos e selecione uma avaliação.");
+        feedbackDiv.textContent = "Preencha todos os campos e selecione uma avaliação.";
+        feedbackDiv.classList.add('text-red-600','font-semibold','mt-2');
         return;
     }
 
@@ -110,10 +130,15 @@ form.addEventListener('submit', (e) => {
             s.classList.remove('text-yellow-400');
             s.classList.add('text-gray-300');
         });
+
+        feedbackDiv.textContent = "Comentário enviado com sucesso!";
+        feedbackDiv.classList.add('text-green-600','font-semibold','mt-2');
+
         renderizarDepoimentos();
     }).catch(err => {
         console.error(err);
-        alert("Erro ao enviar comentário.");
+        feedbackDiv.textContent = "Erro ao enviar comentário.";
+        feedbackDiv.classList.add('text-red-600','font-semibold','mt-2');
     });
 });
 
@@ -125,8 +150,6 @@ AOS.init();
 // =======================
 // Stripe Checkout
 // =======================
-
-// Substitua pela sua chave pública correta do Stripe
 const STRIPE_PUBLISHABLE_KEY = "pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQRooWIMLVjjbjHHtq7lxAMoUw9fc6Q8wY0VgtVTn2004zFVloIo"; 
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 

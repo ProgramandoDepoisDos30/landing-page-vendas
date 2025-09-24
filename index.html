@@ -150,6 +150,29 @@
     <button type="submit" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition inline-block">Enviar Depoimento</button>
   </form>
 
+  <form id="form-depoimento" class="max-w-md mx-auto mb-12 text-left">
+  <label class="block mb-2 font-semibold" for="nome">Nome ou Apelido:</label>
+  <input type="text" id="nome" class="w-full p-2 mb-4 border rounded" placeholder="Seu nome" required>
+
+  <label class="block mb-2 font-semibold">Avaliação:</label>
+  <div class="flex mb-4" id="estrelas">
+    <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="1">★</span>
+    <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="2">★</span>
+    <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="3">★</span>
+    <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="4">★</span>
+    <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="5">★</span>
+  </div>
+
+  <label class="block mb-2 font-semibold" for="comentario">Comentário (máx. 60 caracteres):</label>
+  <textarea id="comentario" rows="2" class="w-full p-2 mb-1 border rounded" placeholder="Escreva seu comentário" maxlength="60"></textarea>
+
+  <button type="submit" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition inline-block">Enviar Depoimento</button>
+</form>
+
+<!-- Feedback de envio -->
+<div id="feedback-comentario"></div>
+
+
   <div id="lista-depoimentos" class="max-w-3xl mx-auto space-y-6"></div>
 </section>
 
