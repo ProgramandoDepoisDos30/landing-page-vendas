@@ -26,8 +26,8 @@ export default async function handler(req, res) {
 
     const produtos = {
       ebook: "price_1Rs9nT2Lo3O3SUleb4s6gV43",
-      planilhas2: "price_1S6YZB2Lo3O3SUlelY52DkRf",
-      planilhas3: "price_1S6Ybs2Lo3O3SUleudFueBxH",
+      planilhas2: "price_1SAywm2Lo3O3SUleJv3T1GDO",
+      planilhas3: "price_1SAys72Lo3O3SUleUS7mgE0f",
     };
 
     const precoId = produtos[produto];
