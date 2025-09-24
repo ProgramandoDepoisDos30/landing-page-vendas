@@ -45,10 +45,11 @@ function atualizarContador() {
 let interval = setInterval(atualizarContador, 1000);
 atualizarContador();
 
+
 // =======================
 // Depoimentos Persistentes via Firestore
 // =======================
-const form = document.getElementById('form-depoimento');
+const formDepoimento = document.getElementById('form-depoimento');
 const listaDepoimentos = document.getElementById('lista-depoimentos');
 const feedbackDiv = document.getElementById('feedback-comentario');
 let estrelasSelecionadas = 0;
@@ -69,47 +70,36 @@ document.querySelectorAll('.estrela').forEach(star => {
 });
 
 // Renderiza depoimentos
-function renderizarDepoimentos() {
+async function renderizarDepoimentos() {
+    if (!listaDepoimentos) return;
     listaDepoimentos.innerHTML = '';
-    db.collection("comentarios").orderBy("criadoEm", "desc").get().then(snapshot => {
+
+    try {
+        const snapshot = await db.collection("comentarios").orderBy("criadoEm", "desc").get();
         snapshot.forEach(docSnap => {
             const dep = docSnap.data();
             const div = document.createElement('div');
             div.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow-md', 'relative');
-            div.dataset.id = docSnap.id;
             div.innerHTML = `
-                <p class="font-bold">${dep.nome} <span class="text-yellow-400">${'★'.repeat(dep.estrelas)}</span></p>
+                <p class="font-bold">${dep.nome} <span class="text-yellow-400">${'★'.repeat(dep.estrelas)}${'☆'.repeat(5 - dep.estrelas)}</span></p>
                 <p>${dep.comentario}</p>
             `;
             listaDepoimentos.appendChild(div);
-
-            // O botão de exclusão não será mostrado para o público geral
-            if (dep.admin === true) { // se quiser marcar admin nos comentários
-                const btnExcluir = document.createElement('button');
-                btnExcluir.textContent = 'X';
-                btnExcluir.classList.add('absolute','top-2','right-2','text-red-600','font-bold','hover:text-red-800');
-                div.appendChild(btnExcluir);
-                btnExcluir.addEventListener('click', () => {
-                    if(confirm('Deseja realmente excluir este comentário?')) {
-                        db.collection("comentarios").doc(div.dataset.id).delete().then(() => {
-                            renderizarDepoimentos();
-                        });
-                    }
-                });
-            }
         });
-    });
+    } catch (err) {
+        console.error("Erro ao carregar comentários:", err);
+    }
 }
 
 renderizarDepoimentos();
 
 // Envio de depoimento
-form.addEventListener('submit', (e) => {
+formDepoimento.addEventListener('submit', async (e) => {
     e.preventDefault();
+
     const nome = document.getElementById('nome').value.trim();
     const comentario = document.getElementById('comentario').value.trim();
-
-    feedbackDiv.textContent = ''; // limpa feedback
+    feedbackDiv.textContent = '';
     feedbackDiv.className = '';
 
     if (!nome || !comentario || estrelasSelecionadas === 0) {
@@ -118,13 +108,15 @@ form.addEventListener('submit', (e) => {
         return;
     }
 
-    db.collection("comentarios").add({
-        nome,
-        comentario,
-        estrelas: estrelasSelecionadas,
-        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(() => {
-        form.reset();
+    try {
+        await db.collection("comentarios").add({
+            nome,
+            comentario,
+            estrelas: estrelasSelecionadas,
+            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        formDepoimento.reset();
         estrelasSelecionadas = 0;
         document.querySelectorAll('.estrela').forEach(s => {
             s.classList.remove('text-yellow-400');
@@ -135,17 +127,19 @@ form.addEventListener('submit', (e) => {
         feedbackDiv.classList.add('text-green-600','font-semibold','mt-2');
 
         renderizarDepoimentos();
-    }).catch(err => {
+    } catch (err) {
         console.error(err);
         feedbackDiv.textContent = "Erro ao enviar comentário.";
         feedbackDiv.classList.add('text-red-600','font-semibold','mt-2');
-    });
+    }
 });
+
 
 // =======================
 // Inicializa AOS
 // =======================
 AOS.init();
+
 
 // =======================
 // Stripe Checkout
