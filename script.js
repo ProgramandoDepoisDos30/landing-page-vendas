@@ -70,7 +70,7 @@ document.querySelectorAll('.estrela').forEach(star => {
 // Renderiza depoimentos
 function renderizarDepoimentos() {
     listaDepoimentos.innerHTML = '';
-    db.collection("depoimentos").orderBy("criadoEm", "desc").get().then(snapshot => {
+    db.collection("comentarios").orderBy("criadoEm", "desc").get().then(snapshot => {
         snapshot.forEach(docSnap => {
             const dep = docSnap.data();
             const div = document.createElement('div');
@@ -85,7 +85,7 @@ function renderizarDepoimentos() {
 
             div.querySelector('.excluir').addEventListener('click', () => {
                 if(confirm('Deseja realmente excluir este comentário?')) {
-                    db.collection("depoimentos").doc(div.dataset.id).delete().then(() => {
+                    db.collection("comentarios").doc(div.dataset.id).delete().then(() => {
                         renderizarDepoimentos();
                     });
                 }
@@ -107,7 +107,7 @@ form.addEventListener('submit', (e) => {
         return;
     }
 
-    db.collection("depoimentos").add({
+    db.collection("comentarios").add({
         nome,
         comentario,
         estrelas: estrelasSelecionadas,
