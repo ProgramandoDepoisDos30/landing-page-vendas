@@ -3,8 +3,6 @@
 // =======================
 const countdown = document.getElementById('countdown-geral');
 const contadorKey = 'contadorOficial';
-
-// Define tempo inicial em segundos
 const tempoFase1 = 2*3600 + 59*60 + 59; // 2h 59m 59s
 const tempoFase2 = 9*60 + 59;           // 9m 59s
 
@@ -18,6 +16,8 @@ function formatTime(totalSegundos) {
 }
 
 function atualizarContador() {
+    if (!countdown) return;
+
     if (estado.fase === 1 || estado.fase === 2) {
         if (estado.segundosRestantes > 0) {
             estado.segundosRestantes--;
@@ -28,9 +28,7 @@ function atualizarContador() {
                 estado.segundosRestantes = tempoFase2;
                 localStorage.setItem(contadorKey, JSON.stringify(estado));
                 clearInterval(interval);
-                setTimeout(() => {
-                    interval = setInterval(atualizarContador, 1000);
-                }, 3000);
+                setTimeout(() => { interval = setInterval(atualizarContador, 1000); }, 3000);
                 return;
             } else if (estado.fase === 2) {
                 countdown.innerHTML = "Oferta Encerrada!";
@@ -39,12 +37,14 @@ function atualizarContador() {
             }
         }
     }
+
     countdown.innerHTML = formatTime(estado.segundosRestantes);
     localStorage.setItem(contadorKey, JSON.stringify(estado));
 }
 
 let interval = setInterval(atualizarContador, 1000);
 atualizarContador();
+
 
 // =======================
 // Depoimentos Persistentes via Firestore
@@ -68,7 +68,7 @@ document.querySelectorAll('.estrela').forEach(star => {
     });
 });
 
-// Renderiza depoimentos do Firestore
+// Renderiza depoimentos
 function renderizarDepoimentos() {
     listaDepoimentos.innerHTML = '';
     db.collection("depoimentos").orderBy("criadoEm", "desc").get().then(snapshot => {
@@ -95,7 +95,6 @@ function renderizarDepoimentos() {
     });
 }
 
-// Inicializa depoimentos
 renderizarDepoimentos();
 
 // Envio de depoimento
@@ -128,7 +127,63 @@ form.addEventListener('submit', (e) => {
     });
 });
 
+
 // =======================
 // Inicializa AOS
 // =======================
 AOS.init();
+
+
+// =======================
+// Stripe Checkout
+// =======================
+
+// Coloque sua chave pública do Stripe aqui
+const STRIPE_PUBLISHABLE_KEY = "pk_live_XXXXXXXXXXXXXXXX"; // substitua pela sua
+const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+
+async function criarCheckout(produto, btn) {
+    if (!stripe) {
+        alert('Stripe não inicializado.');
+        return;
+    }
+
+    btn.disabled = true;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "Redirecionando...";
+
+    try {
+        const res = await fetch('/api/checkout', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ produto })
+        });
+
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({ message: res.statusText }));
+            throw new Error(err.error || err.message || 'Erro ao criar sessão de checkout');
+        }
+
+        const data = await res.json();
+        if (!data.id) throw new Error('Resposta inválida do servidor');
+
+        const result = await stripe.redirectToCheckout({ sessionId: data.id });
+        if (result.error) {
+            alert(result.error.message);
+            console.error(result.error);
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert('Erro ao processar pagamento. Veja console.');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
+// Associa botões aos produtos
+document.getElementById('btn-ebook')?.addEventListener('click', (e) => criarCheckout('ebook', e.currentTarget));
+document.getElementById('btn-planilhas2')?.addEventListener('click', (e) => criarCheckout('planilhas2', e.currentTarget));
+document.getElementById('btn-planilhas3')?.addEventListener('click', (e) => criarCheckout('planilhas3', e.currentTarget));
