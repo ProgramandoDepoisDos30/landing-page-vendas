@@ -1,10 +1,9 @@
 import Stripe from "stripe";
-import 'dotenv/config'; // Adicione isso no topo
 
-// Inicializa Stripe
+// 🚨 Confere se a variável está configurada corretamente no Vercel
 if (!process.env.CHAVE_SECRETA_DA_FAIXA) {
   console.error("❌ Variável de ambiente CHAVE_SECRETA_DA_FAIXA não encontrada!");
-  throw new Error("⚠️ Variável CHAVE_SECRETA_DA_FAIXA não encontrada no ambiente do Vercel!");
+  throw new Error("⚠️ Adicione sua chave secreta da Stripe nas variáveis de ambiente do Vercel!");
 }
 
 const stripe = new Stripe(process.env.CHAVE_SECRETA_DA_FAIXA, {
@@ -12,49 +11,42 @@ const stripe = new Stripe(process.env.CHAVE_SECRETA_DA_FAIXA, {
 });
 
 export default async function handler(req, res) {
-  console.log("🔹 Função /api/checkout chamada");
-
   if (req.method !== "POST") {
-    console.warn("⚠️ Método não permitido:", req.method);
-    res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Método não permitido" });
   }
 
   try {
     const { produto } = req.body;
-    console.log("📦 Produto recebido:", produto);
 
+    // 🏷️ IDs dos produtos cadastrados no Stripe
     const produtos = {
-      ebook: "price_1Rs9nT2Lo3O3SUleb4s6gV43",
-      planilhas2: "price_1SAywm2Lo3O3SUleJv3T1GDO",
-      planilhas3: "price_1SAys72Lo3O3SUleUS7mgE0f",
+      ebook: "price_1Rs9nT2Lo3O3SUleb4s6gV43",      // eBook - Guia do Programador Saudável
+      planilhas2: "price_1SAywm2Lo3O3SUleJv3T1GDO", // 2 Planilhas de Treinos Personalizadas
+      planilhas3: "price_1SAys72Lo3O3SUleUS7mgE0f", // 3 Planilhas + Acompanhamento
     };
 
-    const precoId = produtos[produto];
-    if (!precoId) {
-      console.error("❌ Produto inválido:", produto);
+    const priceId = produtos[produto];
+    if (!priceId) {
       return res.status(400).json({ error: "Produto inválido" });
     }
 
-    console.log("💳 Criando sessão Stripe com priceId:", precoId);
-
+    // 💳 Cria a sessão de pagamento no Stripe
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [
         {
-          price: precoId,
+          price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${req.headers.origin}/?success=true`,
-      cancel_url: `${req.headers.origin}/?canceled=true`,
+      success_url: `${req.headers.origin}/sucesso`,
+      cancel_url: `${req.headers.origin}/cancelado`,
     });
 
-    console.log("✅ Sessão criada com sucesso:", session.id);
     return res.status(200).json({ id: session.id });
-  } catch (err) {
-    console.error("❌ Erro ao criar sessão de checkout:", err);
-    return res.status(500).json({ error: "Erro ao criar sessão de checkout", detalhes: err.message });
+  } catch (error) {
+    console.error("❌ Erro no checkout:", error);
+    return res.status(500).json({ error: "Erro ao criar sessão de checkout" });
   }
 }
