@@ -1,7 +1,7 @@
 import Stripe from "stripe";
-import 'dotenv/config'; // Adicione isso no topo
+import 'dotenv/config';
 
-// Inicializa Stripe
+// Inicializa Stripe com sua chave secreta
 if (!process.env.CHAVE_SECRETA_DA_FAIXA) {
   console.error("❌ Variável de ambiente CHAVE_SECRETA_DA_FAIXA não encontrada!");
   throw new Error("⚠️ Variável CHAVE_SECRETA_DA_FAIXA não encontrada no ambiente do Vercel!");
@@ -21,9 +21,11 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Captura o produto enviado pelo front-end (script.js)
     const { produto } = req.body;
     console.log("📦 Produto recebido:", produto);
 
+    // Mapeamento dos produtos existentes
     const produtos = {
       ebook: "price_1SAys72Lo3O3SUleUS7mgE0f",
       planilhas2: "price_1SAywm2Lo3O3SUleJv3T1GDO",
@@ -38,6 +40,7 @@ export default async function handler(req, res) {
 
     console.log("💳 Criando sessão Stripe com priceId:", precoId);
 
+    // ✅ Adicionando metadata para identificar o produto no webhook
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
@@ -47,14 +50,23 @@ export default async function handler(req, res) {
           quantity: 1,
         },
       ],
+      // URLs de sucesso e cancelamento específicas por produto
       success_url: `${req.headers.origin}/obrigado-${produto}.html`,
       cancel_url: `${req.headers.origin}/?canceled=true`,
+
+      // 🔥 METADATA - Aqui adicionamos o produto
+      metadata: {
+        produto: produto
+      }
     });
 
     console.log("✅ Sessão criada com sucesso:", session.id);
     return res.status(200).json({ id: session.id });
   } catch (err) {
     console.error("❌ Erro ao criar sessão de checkout:", err);
-    return res.status(500).json({ error: "Erro ao criar sessão de checkout", detalhes: err.message });
+    return res.status(500).json({
+      error: "Erro ao criar sessão de checkout",
+      detalhes: err.message
+    });
   }
 }

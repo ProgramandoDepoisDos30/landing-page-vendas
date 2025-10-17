@@ -13,7 +13,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16',
 });
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET; // coloque whsec_Lz4T8YEH3exjnlv0QxrQrIcMOIxB0wAs no Vercel
+// ⚠️ Substitua no Vercel pelo seu valor real: whsec_Lz4T8YEH3exjnlv0QxrQrIcMOIxB0wAs
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -26,32 +27,47 @@ export default async function handler(req, res) {
   let event;
 
   try {
+    // ✅ Verifica a assinatura do webhook para segurança
     event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
   } catch (err) {
-    console.error('Erro ao validar webhook:', err.message);
+    console.error('❌ Erro ao validar webhook:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Evento de checkout concluído
+  // 🎯 Evento de checkout concluído
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
 
-    // Pega os dados do comprador
+    // Coleta as informações do comprador e do produto
     const nome = session.customer_details?.name || 'Cliente';
-    const email = session.customer_details?.email;
+    const email = session.customer_details?.email || '';
     const telefone = session.customer_details?.phone || '';
     const produto = session.metadata?.produto || 'produto desconhecido';
     const dataCompra = new Date(session.created * 1000).toLocaleString();
 
-    // Agora vamos adicionar na planilha
+    console.log(`📩 Compra registrada: ${nome} - ${email} - ${produto}`);
+
+    // ✅ Envia os dados para o seu Apps Script (planilha)
     try {
-      const sheetId = process.env.SHEET_ID; // ID da planilha
-      const doc = SpreadsheetApp.openById(sheetId);
-      const aba = doc.getSheets()[0];
-      aba.appendRow([nome, email, telefone, produto, dataCompra, 'Pendente']);
-      console.log('Compra registrada na planilha:', email);
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbwviJrAjXfAS-j45XhuddcAeOep3jqAZgdM--s9Y77SCOoDG3ZYKBn_n1_JSVgl10EydA/exec",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nome,
+            email,
+            telefone,
+            produto,
+            dataCompra,
+            status: "Pendente"
+          })
+        }
+      );
+
+      console.log("✅ Dados enviados para o Google Sheets com sucesso!");
     } catch (err) {
-      console.error('Erro ao adicionar na planilha:', err.message);
+      console.error("❌ Erro ao enviar para o Google Sheets:", err.message);
     }
   }
 
