@@ -1,41 +1,58 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seu Código. Seu Treino. Sua Saúde.</title>
+
+  <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS (Animações) -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <!-- CSS personalizado -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-50 font-sans text-gray-800">
 
-<!-- Hero Section -->
+<!-- =========================
+     Hero Section
+========================= -->
 <section class="hero-section relative">
   <img src="esteira.1.jpg" alt="Treino saudável para programadores">
   <div class="hero-overlay flex flex-col justify-center items-center text-center">
     <h1 class="font-bold text-white text-4xl md:text-5xl mb-4" data-aos="fade-down">Transforme seu Corpo e sua Mente!</h1>
-    <p class="text-white text-lg md:text-xl max-w-xl mb-6" data-aos="fade-up">Descubra como programadores estão cuidando da saúde, aumentando foco e energia mesmo com rotinas apertadas.</p>
+    <p class="text-white text-lg md:text-xl max-w-xl mb-6" data-aos="fade-up">
+      Descubra como programadores estão cuidando da saúde, aumentando foco e energia mesmo com rotinas apertadas.
+    </p>
     <a href="#planos" class="bg-yellow-400 text-gray-900 px-8 py-3 rounded-full font-bold hover:bg-yellow-300 shadow-lg transition" data-aos="zoom-in">Quero começar agora</a>
   </div>
 </section>
 
-<!-- Benefícios gerais -->
+<!-- =========================
+     Benefícios
+========================= -->
 <section class="py-20 bg-gray-50 text-center">
   <div class="container mx-auto px-4">
     <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">Escolha seu caminho para saúde e produtividade</h2>
     <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <!-- Card Benefício 1 -->
       <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up">
         <i class="fas fa-book text-indigo-600 text-3xl mb-4"></i>
         <h3 class="font-bold text-xl mb-2">Aprenda com o eBook</h3>
         <p>Descubra dicas práticas de postura, treinos rápidos e alimentação para programadores.</p>
       </div>
+      <!-- Card Benefício 2 -->
       <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up" data-aos-delay="200">
         <i class="fas fa-dumbbell text-indigo-600 text-3xl mb-4"></i>
         <h3 class="font-bold text-xl mb-2">Treinos Personalizados</h3>
         <p>Planilhas adaptadas ao seu corpo e rotina para resultados rápidos e eficientes.</p>
       </div>
+      <!-- Card Benefício 3 -->
       <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up" data-aos-delay="400">
         <i class="fas fa-user-check text-indigo-600 text-3xl mb-4"></i>
         <h3 class="font-bold text-xl mb-2">Acompanhamento Profissional</h3>
@@ -45,42 +62,50 @@
   </div>
 </section>
 
-<!-- Contador geral -->
+<!-- =========================
+     Contador
+========================= -->
 <section class="py-20 bg-indigo-600 text-white text-center">
   <h2 class="text-3xl md:text-4xl font-bold mb-4" data-aos="fade-down">⏰ Oferta Especial por Tempo Limitado!</h2>
   <p class="mb-8 text-lg md:text-xl" data-aos="fade-up">Garanta seu plano agora e transforme sua saúde antes que a promoção acabe!</p>
   <div id="countdown-geral" class="countdown text-3xl font-bold"></div>
 </section>
 
-<!-- Sobre o Autor -->
+<!-- =========================
+     Sobre o Autor / Avatar
+========================= -->
 <section class="py-20 bg-gray-50 text-gray-900" data-aos="fade-up">
   <div class="container mx-auto px-4 max-w-4xl text-center">
     <h2 class="text-3xl md:text-4xl font-bold mb-6">Sobre o Autor</h2>
     <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
-      <div class="w-48 h-48 mx-auto md:mx-0 rounded-full overflow-hidden bg-black shadow-lg flex items-center justify-center">
+      <!-- Avatar -->
+      <div class="avatar-container w-48 h-48 mx-auto md:mx-0 rounded-full overflow-hidden bg-black shadow-lg flex items-center justify-center scale-100 transition-transform">
         <img src="avatar.png" alt="Avatar do autor" class="w-full h-full object-cover">
       </div>
+      <!-- Texto do autor -->
       <div class="flex-1 text-left">
         <p class="text-lg md:text-xl mb-4 leading-relaxed">
-          💪 Com <span class="font-bold">mais de 8 anos de experiência</span> como Personal Trainer e formado em <span class="font-bold">Educação Física</span>, eu agora aplico todo meu conhecimento no universo da programação.
+          💪 Com <span class="font-bold">mais de 8 anos de experiência</span> como Personal Trainer e formado em <span class="font-bold">Educação Física</span>, aplico meu conhecimento no universo da programação.
         </p>
         <p class="text-lg md:text-xl mb-4 leading-relaxed">
-          🖥️ Entendo de perto os desafios de quem passa horas diante do computador e criei soluções práticas para <span class="text-yellow-400 font-bold">melhorar postura, energia e bem-estar de programadores</span>.
+          🖥️ Entendo os desafios de quem passa horas diante do computador e criei soluções práticas para <span class="text-yellow-400 font-bold">melhorar postura, energia e bem-estar de programadores</span>.
         </p>
         <p class="text-lg md:text-xl leading-relaxed">
-          ✅ Aqui você encontra orientação profissional baseada em ciência e experiência real, adaptada para quem quer evoluir no código sem descuidar da saúde.
+          ✅ Orientação profissional baseada em ciência e experiência real, adaptada para quem quer evoluir no código sem descuidar da saúde.
         </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Planos -->
+<!-- =========================
+     Planos
+========================= -->
 <section class="py-20 bg-gray-50 text-gray-900 text-center" id="planos" data-aos="fade-up">
   <h2 class="text-3xl font-bold mb-12">Escolha seu Plano Ideal</h2>
-  <div class="planos-container flex flex-col md:flex-row justify-center gap-8">
-
-    <div class="card selo-basico border border-gray-200 p-6 rounded-xl shadow-md">
+  <div class="planos-container grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    <!-- Plano eBook -->
+    <div class="card selo-basico destaque border border-gray-200 p-6 rounded-xl shadow-md">
       <h3 class="font-bold mb-4">eBook</h3>
       <p class="text-gray-500 line-through mb-2">R$17,00</p>
       <p class="text-indigo-600 text-2xl font-bold mb-2">R$9,97</p>
@@ -90,7 +115,7 @@
       </ul>
       <button id="btn-ebook" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition">Comprar</button>
     </div>
-
+    <!-- Plano 2 Planilhas -->
     <div class="card selo-intermediario border-2 border-indigo-600 p-6 rounded-xl shadow-md relative">
       <div class="absolute top-2 right-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded-full font-bold">Mais Popular</div>
       <h3 class="font-bold mb-4">2 Planilhas Personalizadas</h3>
@@ -103,7 +128,7 @@
       </ul>
       <button id="btn-planilhas2" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition">Comprar</button>
     </div>
-
+    <!-- Plano Completo -->
     <div class="card selo-completo border-2 border-red-600 p-6 rounded-xl shadow-md relative">
       <div class="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold">Vagas Limitadas!</div>
       <h3 class="font-bold mb-4">3 Planilhas + Acompanhamento</h3>
@@ -117,48 +142,61 @@
       </ul>
       <button id="btn-planilhas3" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition">Comprar</button>
     </div>
-
   </div>
 </section>
 
-<!-- Depoimentos -->
+<!-- =========================
+     Depoimentos
+========================= -->
 <section class="py-20 bg-gray-50 text-gray-900 text-center" id="avaliacoes" data-aos="fade-up">
   <h2 class="text-3xl font-bold mb-8">Veja como outros programadores estão evoluindo</h2>
 
-  <!-- Formulário de Comentários -->
-  <form id="form-depoimento" class="max-w-md mx-auto mb-12 text-left">
+  <!-- =========================
+       Auth Section (Login com Google)
+       ========================= -->
+  <div id="auth-section" class="max-w-md mx-auto mb-6 text-center">
+    <!-- Mensagem de boas-vindas -->
+    <p id="msg-login" class="mb-4 text-yellow-600 font-semibold"></p>
+
+    <!-- Botão de login Google -->
+    <button id="btn-google-login" class="bg-red-600 text-white px-6 py-2 rounded-full font-bold hover:bg-red-500 transition inline-flex items-center gap-2">
+      <i class="fab fa-google"></i> Entrar com Google
+    </button>
+
+    <!-- Botão logout (inicialmente oculto) -->
+    <button id="btn-logout" class="bg-gray-700 text-white px-6 py-2 rounded-full font-bold hover:bg-gray-600 transition mt-4 hidden">Logout</button>
+  </div>
+
+  <!-- Formulário de Comentários (permanece) -->
+  <form id="form-depoimento" class="max-w-md mx-auto mb-12 text-left hidden">
     <label class="block mb-2 font-semibold" for="nome">Nome ou Apelido:</label>
     <input type="text" id="nome" class="w-full p-2 mb-4 border rounded" placeholder="Seu nome" required>
-
     <label class="block mb-2 font-semibold">Avaliação:</label>
-    <div class="flex mb-4" id="estrelas">
+    <div class="flex mb-4">
       <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="1">★</span>
       <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="2">★</span>
       <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="3">★</span>
       <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="4">★</span>
       <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="5">★</span>
     </div>
-
     <label class="block mb-2 font-semibold" for="comentario">Comentário (máx. 60 caracteres):</label>
     <textarea id="comentario" rows="2" class="w-full p-2 mb-1 border rounded" placeholder="Escreva seu comentário" maxlength="60"></textarea>
-
     <button type="submit" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition inline-block">Enviar Depoimento</button>
   </form>
 
   <!-- Feedback de envio -->
   <div id="feedback-comentario"></div>
-
   <!-- Lista de Depoimentos -->
   <div id="lista-depoimentos" class="max-w-3xl mx-auto space-y-6"></div>
 </section>
 
-<!-- CTA Final -->
+<!-- =========================
+     CTA Final
+========================= -->
 <section class="relative bg-cover bg-center py-24 text-white text-center" style="background-image:url('esteira.3.jpg');">
   <div class="absolute inset-0 bg-black bg-opacity-70"></div>
   <div class="relative z-10 container mx-auto px-4 max-w-3xl">
-    <h2 class="text-4xl md:text-5xl font-extrabold mb-6" data-aos="fade-up">
-      🚀 Não adie mais sua transformação!
-    </h2>
+    <h2 class="text-4xl md:text-5xl font-extrabold mb-6" data-aos="fade-up">🚀 Não adie mais sua transformação!</h2>
     <p class="text-xl md:text-2xl mb-8 leading-relaxed" data-aos="fade-up" data-aos-delay="200">
       Escolha entre <span class="text-yellow-400 font-bold">eBook</span>, <span class="text-yellow-400 font-bold">Planilhas</span> ou <span class="text-yellow-400 font-bold">Acompanhamento</span> — <br>
       tudo <span class="text-green-400 font-bold">100% seguro via Stripe</span>.
@@ -174,6 +212,7 @@
   Quero meu plano
 </a>
 
+<!-- Footer -->
 <footer class="bg-gray-800 text-gray-300 py-6 text-center">
   <p class="mb-1">© 2025 Programando Depois dos 30. Todos os direitos reservados.</p>
   <p>Confira nossos conteúdos no YouTube: 
@@ -181,15 +220,21 @@
   </p>
 </footer>
 
+<!-- =========================
+     Scripts
+========================= -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
 
-<!-- Firebase App -->
+<!-- Firebase Compat (para facilitar integração rápida) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<!-- Firebase Firestore -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
+  // =======================
+  // Configuração Firebase
+  // =======================
   const firebaseConfig = {
     apiKey: "AIzaSyDucaT1FMVt1JbmH82l9E-57YbQ4wkaf1s",
     authDomain: "lading-page-vendas.firebaseapp.com",
@@ -199,10 +244,58 @@
     appId: "1:63320297248:web:1234567890abcdef"
   };
   firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
   const db = firebase.firestore();
+
+  // =======================
+  // Login com Google
+  // =======================
+  const btnGoogle = document.getElementById('btn-google-login');
+  const btnLogout = document.getElementById('btn-logout');
+  const msgLogin = document.getElementById('msg-login');
+
+  // Clique no botão Google
+  btnGoogle.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        const user = result.user;
+        msgLogin.textContent = `Bem-vindo(a), ${user.displayName}!`;
+        btnGoogle.classList.add('hidden'); // Esconde botão login
+        btnLogout.classList.remove('hidden'); // Mostra logout
+      })
+      .catch((error) => {
+        console.error("Erro ao logar com Google:", error);
+        alert("Falha ao fazer login. Tente novamente.");
+      });
+  });
+
+  // Logout
+  btnLogout.addEventListener('click', () => {
+    auth.signOut().then(() => {
+      msgLogin.textContent = '';
+      btnGoogle.classList.remove('hidden');
+      btnLogout.classList.add('hidden');
+    });
+  });
+
+  // Mantém login se página recarregar
+  auth.onAuthStateChanged((user) => {
+    if(user){
+      msgLogin.textContent = `Bem-vindo(a), ${user.displayName}!`;
+      btnGoogle.classList.add('hidden');
+      btnLogout.classList.remove('hidden');
+    } else {
+      msgLogin.textContent = '';
+      btnGoogle.classList.remove('hidden');
+      btnLogout.classList.add('hidden');
+    }
+  });
+
+  // Inicializa AOS
+  AOS.init();
 </script>
-
 <script src="script.js"></script>
-
 </body>
 </html>

@@ -216,7 +216,7 @@ body {
 }
 
 /* =========================
-   Depoimentos
+   Depoimentos / Comentários
 ========================= */
 #form-depoimento input,
 #form-depoimento textarea {
@@ -225,11 +225,13 @@ body {
   padding: 0.5rem;
   width: 100%;
   margin-bottom: 0.5rem;
+  font-size: 1rem;
 }
 
 .estrela {
   transition: color 0.2s;
   cursor: pointer;
+  font-size: 1.8rem;
 }
 
 .estrela.cheia {
@@ -243,11 +245,69 @@ body {
 }
 
 #feedback-comentario.success {
-  color: #16a34a;
+  color: #16a34a; /* verde */
 }
 
 #feedback-comentario.error {
-  color: #dc2626;
+  color: #dc2626; /* vermelho */
+}
+
+/* =========================
+   Login / Registro
+========================= */
+#auth-section {
+  background: #f3f4f6;
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+#login-form input {
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+#login-form button {
+  background: #10b981;
+  color: white;
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+#login-form button:hover {
+  background: #059669;
+}
+
+/* Botões Login / Logout */
+#auth-buttons button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+}
+
+#btn-login {
+  background: #3b82f6;
+  color: white;
+}
+
+#btn-login:hover {
+  background: #2563eb;
+}
+
+#btn-logout {
+  background: #ef4444;
+  color: white;
+}
+
+#btn-logout:hover {
+  background: #b91c1c;
 }
 
 /* =========================
@@ -316,12 +376,8 @@ footer {
   object-position: center 60%;
 }
 
-.scale-0 { transform: scale(0); opacity: 0; }
-.scale-100 { transform: scale(1); opacity: 1; }
-.transition-transform { transition: transform 0.5s ease, opacity 0.5s ease; }
-
 /* =========================
-   Botões dos Planos
+   Botões e Interações
 ========================= */
 button {
   cursor: pointer;

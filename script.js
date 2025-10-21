@@ -1,13 +1,21 @@
+// =========================================
+// SCRIPT.JS COMPLETO - LANDING PAGE
+// =========================================
+
 // =======================
 // Contador Persistente
 // =======================
-const countdown = document.getElementById('countdown-geral');
-const contadorKey = 'contadorOficial';
+const countdown = document.getElementById('countdown-geral'); // Elemento que mostra o contador
+const contadorKey = 'contadorOficial'; // Chave para salvar o estado no localStorage
+
+// Definição do tempo das fases em segundos
 const tempoFase1 = 2*3600 + 59*60 + 59; // 2h 59m 59s
 const tempoFase2 = 9*60 + 59;           // 9m 59s
 
+// Recupera estado do contador do localStorage ou inicializa
 let estado = JSON.parse(localStorage.getItem(contadorKey)) || { fase: 1, segundosRestantes: tempoFase1 };
 
+// Função para formatar o tempo em HH:MM:SS
 function formatTime(totalSegundos) {
     const h = Math.floor(totalSegundos / 3600);
     const m = Math.floor((totalSegundos % 3600) / 60);
@@ -15,6 +23,7 @@ function formatTime(totalSegundos) {
     return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
+// Atualiza o contador a cada segundo
 function atualizarContador() {
     if (!countdown) return;
 
@@ -49,10 +58,10 @@ atualizarContador();
 // =======================
 // Depoimentos Persistentes via Firestore
 // =======================
-const formDepoimento = document.getElementById('form-depoimento');
-const listaDepoimentos = document.getElementById('lista-depoimentos');
-const feedbackDiv = document.getElementById('feedback-comentario');
-let estrelasSelecionadas = 0;
+const formDepoimento = document.getElementById('form-depoimento'); // Formulário de comentários
+const listaDepoimentos = document.getElementById('lista-depoimentos'); // Div onde os depoimentos serão exibidos
+const feedbackDiv = document.getElementById('feedback-comentario'); // Div de feedback ao enviar comentário
+let estrelasSelecionadas = 0; // Número de estrelas selecionadas pelo usuário
 
 // Seleção de estrelas
 document.querySelectorAll('.estrela').forEach(star => {
@@ -69,7 +78,7 @@ document.querySelectorAll('.estrela').forEach(star => {
     });
 });
 
-// Renderiza depoimentos
+// Renderiza depoimentos existentes no Firestore
 async function renderizarDepoimentos() {
     if (!listaDepoimentos) return;
     listaDepoimentos.innerHTML = '';
@@ -93,8 +102,8 @@ async function renderizarDepoimentos() {
 
 renderizarDepoimentos();
 
-// Envio de depoimento
-formDepoimento.addEventListener('submit', async (e) => {
+// Envio de depoimento (somente se estiver logado)
+formDepoimento?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const nome = document.getElementById('nome').value.trim();
@@ -136,7 +145,58 @@ formDepoimento.addEventListener('submit', async (e) => {
 
 
 // =======================
-// Inicializa AOS
+// Firebase Auth - Login via Google
+// =======================
+const btnGoogle = document.getElementById('btn-google-login'); // Botão Google login
+const btnLogout = document.getElementById('btn-logout');       // Botão logout
+const msgLogin = document.getElementById('msg-login');         // Mensagem de boas-vindas
+const authSection = document.getElementById('auth-section');   // Div de login auth
+
+// Clique no botão Google
+btnGoogle.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+        .then((result) => {
+            const user = result.user;
+            msgLogin.textContent = `Olá, ${user.displayName}!`;
+            btnGoogle.classList.add('hidden');
+            btnLogout.classList.remove('hidden');
+            formDepoimento?.classList.remove('hidden'); // mostra formulário de depoimento
+        })
+        .catch((error) => {
+            console.error("Erro ao logar com Google:", error);
+            alert("Falha ao fazer login. Tente novamente.");
+        });
+});
+
+// Logout
+btnLogout.addEventListener('click', () => {
+    auth.signOut().then(() => {
+        msgLogin.textContent = '';
+        btnGoogle.classList.remove('hidden');
+        btnLogout.classList.add('hidden');
+        formDepoimento?.classList.add('hidden');
+    });
+});
+
+// Mantém login se página recarregar
+auth.onAuthStateChanged((user) => {
+    if(user){
+        msgLogin.textContent = `Olá, ${user.displayName}!`;
+        btnGoogle.classList.add('hidden');
+        btnLogout.classList.remove('hidden');
+        formDepoimento?.classList.remove('hidden');
+    } else {
+        msgLogin.textContent = '';
+        btnGoogle.classList.remove('hidden');
+        btnLogout.classList.add('hidden');
+        formDepoimento?.classList.add('hidden');
+    }
+});
+
+
+// =======================
+// Inicializa AOS (Animações)
 // =======================
 AOS.init();
 
@@ -147,6 +207,7 @@ AOS.init();
 const STRIPE_PUBLISHABLE_KEY = "pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQRooWIMLVjjbjHHtq7lxAMoUw9fc6Q8wY0VgtVTn2004zFVloIo"; 
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
+// Cria sessão de checkout
 async function criarCheckout(produto, btn) {
     if (!stripe) {
         alert('Stripe não inicializado.');
