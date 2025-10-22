@@ -1,297 +1,262 @@
+// =======================
 // script.js
-// =========================================
-// SCRIPT.JS COMPLETO - LANDING PAGE
-// (Atualizado: login apenas com Google; formulário de depoimentos só aparece após login)
-// =========================================
+// =======================
 
-// -----------------------
-// Contador Persistente
-// -----------------------
-/* pega o elemento onde o contador é mostrado */
-const countdown = document.getElementById('countdown-geral'); // elemento do DOM para o contador
-const contadorKey = 'contadorOficial'; // chave do localStorage para persistir estado
+// =======================
+// Variáveis Globais
+// =======================
+let userLogado = null;         // Guarda os dados do usuário logado
+let notaSelecionada = 0;       // Nota selecionada no formulário (1 a 5 estrelas)
+const estrelas = document.querySelectorAll(".estrela"); // Seleciona todas as estrelas
 
-/* tempos das fases (em segundos) */
-const tempoFase1 = 2*3600 + 59*60 + 59; // 2h 59m 59s
-const tempoFase2 = 9*60 + 59;           // 9m 59s
-
-/* carrega estado salvo ou inicializa com fase 1 */
-let estado = JSON.parse(localStorage.getItem(contadorKey)) || { fase: 1, segundosRestantes: tempoFase1 };
-
-/* formata segundos para HH:MM:SS */
-function formatTime(totalSegundos) {
-  const h = Math.floor(totalSegundos / 3600);
-  const m = Math.floor((totalSegundos % 3600) / 60);
-  const s = totalSegundos % 60;
-  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-}
-
-/* função que atualiza o contador (executada a cada segundo) */
-function atualizarContador() {
-  if (!countdown) return; // se elemento não existir, sai
-
-  if (estado.fase === 1 || estado.fase === 2) {
-    if (estado.segundosRestantes > 0) {
-      estado.segundosRestantes--;
-    } else {
-      if (estado.fase === 1) {
-        // passa para fase 2 (mensagem curta, depois inicia contagem da fase 2)
-        countdown.innerHTML = "O tempo da sua oferta acabou, mas vou liberar essa condição por pouco tempo ainda!";
-        estado.fase = 2;
-        estado.segundosRestantes = tempoFase2;
-        localStorage.setItem(contadorKey, JSON.stringify(estado));
-        clearInterval(interval);
-        setTimeout(() => { interval = setInterval(atualizarContador, 1000); }, 3000);
-        return;
-      } else if (estado.fase === 2) {
-        // oferta encerrada definitivamente
-        countdown.innerHTML = "Oferta Encerrada!";
-        clearInterval(interval);
-        return;
-      }
-    }
-  }
-
-  // atualiza exibição e salva estado
-  countdown.innerHTML = formatTime(estado.segundosRestantes);
-  localStorage.setItem(contadorKey, JSON.stringify(estado));
-}
-
-/* inicia loop do contador */
-let interval = setInterval(atualizarContador, 1000);
-atualizarContador();
-
-
-// -----------------------
-// Depoimentos (Firestore)
-// -----------------------
-/* elementos do DOM usados para comentários */
-const formDepoimento = document.getElementById('form-depoimento'); // formulário (oculto para não logados)
-const listaDepoimentos = document.getElementById('lista-depoimentos'); // área de listagem
-const feedbackDiv = document.getElementById('feedback-comentario'); // área de feedback
-let estrelasSelecionadas = 0; // guarda nota escolhida
-
-/* lógica das estrelas (seleção visual) */
-document.querySelectorAll('.estrela').forEach(star => {
-  star.addEventListener('click', () => {
-    estrelasSelecionadas = parseInt(star.dataset.valor, 10); // converte data-valor
-    // reseta visual
-    document.querySelectorAll('.estrela').forEach(s => {
-      s.classList.remove('text-yellow-400');
-      s.classList.add('text-gray-300');
-    });
-    // marca as estrelas até o valor selecionado
-    for (let i = 0; i < estrelasSelecionadas; i++) {
-      document.querySelectorAll('.estrela')[i].classList.add('text-yellow-400');
-      document.querySelectorAll('.estrela')[i].classList.remove('text-gray-300');
-    }
+// =======================
+// Configuração das Estrelas (avaliação)
+// =======================
+estrelas.forEach(estrela => {
+  estrela.addEventListener("click", () => {
+    notaSelecionada = parseInt(estrela.dataset.valor); // salva valor da estrela clicada
+    atualizarEstrelas(); // atualiza visualmente as estrelas
   });
 });
 
-/* função que carrega depoimentos do Firestore e os renderiza na página */
-async function renderizarDepoimentos() {
-  if (!listaDepoimentos) return; // se elemento não existir, sai
-  listaDepoimentos.innerHTML = ''; // limpa lista antes de renderizar
-
-  try {
-    // consulta coleção "comentarios" ordenada por data de criação (desc)
-    const snapshot = await db.collection("comentarios").orderBy("criadoEm", "desc").get();
-    snapshot.forEach(docSnap => {
-      const dep = docSnap.data(); // dados do documento
-      // cria container do depoimento
-      const div = document.createElement('div');
-      div.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow-md', 'relative');
-      // monta HTML usando nome (dep.nome) e estrelas (dep.estrelas) e comentário (dep.comentario)
-      div.innerHTML = `
-        <p class="font-bold">${dep.nome || 'Usuario'} <span class="text-yellow-400">${'★'.repeat(dep.estrelas || 0)}${'☆'.repeat(5 - (dep.estrelas || 0))}</span></p>
-        <p>${dep.comentario || ''}</p>
-      `;
-      listaDepoimentos.appendChild(div); // adiciona à lista
-    });
-  } catch (err) {
-    console.error("Erro ao carregar comentários:", err);
-  }
+function atualizarEstrelas() {
+  estrelas.forEach(estrela => {
+    estrela.style.color = (parseInt(estrela.dataset.valor) <= notaSelecionada) ? "#FACC15" : "#D1D5DB";
+  });
 }
 
-/* renderiza ao carregar o script */
-renderizarDepoimentos();
+// =======================
+// Login e Logout Google (Firebase Auth)
+// =======================
+const btnLogin = document.getElementById("btn-google-login");
+const btnLogout = document.getElementById("btn-logout");
+const msgLogin = document.getElementById("msg-login");
+const formDepoimento = document.getElementById("form-depoimento");
 
-/* submissão do formulário de depoimento
-   OBS: o formulário não contém campo 'nome' — o nome será obtido do usuário autenticado (displayName)
-*/
-formDepoimento?.addEventListener('submit', async (e) => {
-  e.preventDefault(); // evita comportamento padrão de envio
+// Provider Google
+const provider = new firebase.auth.GoogleAuthProvider();
 
-  // pega texto do comentário
-  const comentario = document.getElementById('comentario').value.trim();
-
-  // limpa feedback
-  feedbackDiv.textContent = '';
-  feedbackDiv.className = '';
-
-  // validações básicas
-  if (!comentario || estrelasSelecionadas === 0) {
-    feedbackDiv.textContent = "Preencha comentário e selecione uma avaliação.";
-    feedbackDiv.classList.add('text-red-600','font-semibold','mt-2');
-    return;
-  }
-
-  // pega usuário atual (garantido que form só aparece quando user está logado)
-  const user = auth.currentUser;
-  if (!user) {
-    feedbackDiv.textContent = "Você precisa estar logado para enviar um depoimento.";
-    feedbackDiv.classList.add('text-red-600','font-semibold','mt-2');
-    return;
-  }
-
-  try {
-    // salva no Firestore
-    await db.collection("comentarios").add({
-      nome: user.displayName || user.email || 'Usuário',
-      uid: user.uid,
-      comentario,
-      estrelas: estrelasSelecionadas,
-      criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    // reseta UI
-    document.getElementById('comentario').value = '';
-    estrelasSelecionadas = 0;
-    document.querySelectorAll('.estrela').forEach(s => {
-      s.classList.remove('text-yellow-400');
-      s.classList.add('text-gray-300');
-    });
-
-    feedbackDiv.textContent = "Comentário enviado com sucesso!";
-    feedbackDiv.classList.add('text-green-600','font-semibold','mt-2');
-
-    // recarrega lista de depoimentos
-    renderizarDepoimentos();
-  } catch (err) {
-    console.error(err);
-    feedbackDiv.textContent = "Erro ao enviar comentário.";
-    feedbackDiv.classList.add('text-red-600','font-semibold','mt-2');
-  }
-});
-
-
-// -----------------------
-// Firebase Auth (Google only)
-// -----------------------
-/* elementos de autenticação */
-const btnGoogle = document.getElementById('btn-google-login'); // botão que dispara popup Google
-const btnLogout = document.getElementById('btn-logout');       // botão logout
-const msgLogin = document.getElementById('msg-login');         // mostra "Olá, Nome"
-const authArea = document.getElementById('auth-area');         // área de auth (opcional)
-
-/* ao clicar no botão Google: abre popup de autenticação */
-btnGoogle?.addEventListener('click', () => {
-  const provider = new firebase.auth.GoogleAuthProvider(); // provider Google
+// Evento login
+btnLogin.addEventListener("click", () => {
   auth.signInWithPopup(provider)
-    .then((result) => {
-      // sucesso: resultado contém user
-      const user = result.user;
-      // mostra mensagem de boas-vindas
-      msgLogin.textContent = `Olá, ${user.displayName || user.email}!`;
-      // esconde botão de login, mostra o logout e o formulário de depoimento
-      btnGoogle.classList.add('hidden');
-      btnLogout.classList.remove('hidden');
-      formDepoimento?.classList.remove('hidden');
+    .then(result => {
+      userLogado = result.user;
+      atualizarUI(); // atualiza interface para usuário logado
     })
-    .catch((error) => {
-      // erro (ex: domínio não autorizado, popup bloqueado, etc.)
-      console.error("Erro ao logar com Google:", error);
-      alert("Falha ao fazer login. Tente novamente.");
+    .catch(error => {
+      console.error("Erro login Google:", error);
     });
 });
 
-/* logout: desconecta usuário e ajusta UI */
-btnLogout?.addEventListener('click', () => {
+// Evento logout
+btnLogout.addEventListener("click", () => {
   auth.signOut().then(() => {
-    // limpa estado UI após logout
-    msgLogin.textContent = '';
-    btnGoogle.classList.remove('hidden');
-    btnLogout.classList.add('hidden');
-    formDepoimento?.classList.add('hidden');
-  }).catch(err => {
-    console.error("Erro no logout:", err);
-    alert("Erro ao efetuar logout: " + (err.message || err));
+    userLogado = null;
+    atualizarUI(); // atualiza interface para usuário deslogado
   });
 });
 
-/* observar mudanças de autenticação (mantém sessão após reload) */
-auth.onAuthStateChanged((user) => {
-  if (user) {
-    // usuário está logado: atualiza UI adequadamente
-    msgLogin.textContent = `Olá, ${user.displayName || user.email}!`;
-    btnGoogle.classList.add('hidden');
-    btnLogout.classList.remove('hidden');
-    formDepoimento?.classList.remove('hidden');
+// =======================
+// Atualiza interface dependendo do status do usuário
+// =======================
+function atualizarUI() {
+  if (userLogado) {
+    msgLogin.textContent = `Olá, ${userLogado.displayName}! Você pode deixar seu depoimento.`;
+    btnLogin.style.display = "none";
+    btnLogout.style.display = "inline-block";
+    formDepoimento.classList.remove("hidden");
   } else {
-    // usuário deslogado: esconde o formulário
-    msgLogin.textContent = '';
-    btnGoogle.classList.remove('hidden');
-    btnLogout.classList.add('hidden');
-    formDepoimento?.classList.add('hidden');
-  }
-});
-
-
-// -----------------------
-// Inicializa AOS
-// -----------------------
-AOS.init();
-
-
-// -----------------------
-// Stripe Checkout (mantido como antes)
-// -----------------------
-const STRIPE_PUBLISHABLE_KEY = "pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQRooWIMLVjjbjHHtq7lxAMoUw9fc6Q8wY0VgtVTn2004zFVloIo"; 
-const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-
-/* cria sessão chamado /api/checkout (o backend precisa existir em produção) */
-async function criarCheckout(produto, btn) {
-  if (!stripe) {
-    alert('Stripe não inicializado.');
-    return;
-  }
-
-  btn.disabled = true;
-  const originalText = btn.innerHTML;
-  btn.innerHTML = "Redirecionando...";
-
-  try {
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ produto })
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ message: res.statusText }));
-      throw new Error(err.error || err.message || 'Erro ao criar sessão de checkout');
-    }
-
-    const data = await res.json();
-    if (!data.id) throw new Error('Resposta inválida do servidor');
-
-    const result = await stripe.redirectToCheckout({ sessionId: data.id });
-    if (result.error) {
-      alert(result.error.message);
-      console.error(result.error);
-      btn.disabled = false;
-      btn.innerHTML = originalText;
-    }
-
-  } catch (err) {
-    console.error(err);
-    alert('Erro ao processar pagamento. Veja console.');
-    btn.disabled = false;
-    btn.innerHTML = originalText;
+    msgLogin.textContent = "";
+    btnLogin.style.display = "inline-flex";
+    btnLogout.style.display = "none";
+    formDepoimento.classList.add("hidden");
   }
 }
 
-/* associa botões às ações de checkout */
-document.getElementById('btn-ebook')?.addEventListener('click', (e) => criarCheckout('ebook', e.currentTarget));
-document.getElementById('btn-planilhas2')?.addEventListener('click', (e) => criarCheckout('planilhas2', e.currentTarget));
-document.getElementById('btn-planilhas3')?.addEventListener('click', (e) => criarCheckout('planilhas3', e.currentTarget));
+// =======================
+// Envio de depoimento (Firestore)
+// =======================
+formDepoimento.addEventListener("submit", (e) => {
+  e.preventDefault(); // previne reload da página
+
+  const comentario = document.getElementById("comentario").value.trim();
+  if (!notaSelecionada || !comentario) {
+    alert("Selecione uma nota e escreva seu comentário!");
+    return;
+  }
+
+  // Cria objeto do depoimento
+  const novoDepoimento = {
+    uid: userLogado.uid,
+    nome: userLogado.displayName,
+    nota: notaSelecionada,
+    comentario: comentario,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  // Salva no Firestore
+  db.collection("depoimentos").add(novoDepoimento)
+    .then(() => {
+      document.getElementById("comentario").value = "";
+      notaSelecionada = 0;
+      atualizarEstrelas();
+      carregarDepoimentos(); // recarrega lista
+      document.getElementById("feedback-comentario").textContent = "Depoimento enviado com sucesso!";
+      setTimeout(() => { document.getElementById("feedback-comentario").textContent = ""; }, 3000);
+    })
+    .catch(err => console.error("Erro ao salvar depoimento:", err));
+});
+
+// =======================
+// Carrega depoimentos (Firestore + comentários antigos)
+// =======================
+function carregarDepoimentos() {
+  const lista = document.getElementById("lista-depoimentos");
+  lista.innerHTML = ""; // limpa lista
+
+  // Primeiro, carrega comentários antigos (sem login)
+  const comentariosAntigos = [
+    { nome: "João", nota: 5, comentario: "Ótimo sistema!", uid: null },
+    { nome: "Maria", nota: 4, comentario: "Me ajudou muito.", uid: null },
+  ];
+
+  comentariosAntigos.forEach(d => {
+    const div = criarDepoimentoHTML(d, false); // false = não permite editar/excluir
+    lista.appendChild(div);
+  });
+
+  // Agora, carrega depoimentos do Firestore (usuários logados)
+  db.collection("depoimentos").orderBy("timestamp", "desc").get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        d.id = doc.id; // salva id do documento
+        const div = criarDepoimentoHTML(d, true); // true = permite editar/excluir
+        lista.appendChild(div);
+      });
+    });
+}
+
+// =======================
+// Cria HTML de um depoimento
+// permiteEditar: se true, adiciona botões de editar/excluir
+// =======================
+function criarDepoimentoHTML(depoimento, permiteEditar) {
+  const div = document.createElement("div");
+  div.className = "bg-white p-4 rounded shadow-md text-left";
+
+  const estrelasHTML = "★".repeat(depoimento.nota) + "☆".repeat(5 - depoimento.nota);
+
+  div.innerHTML = `
+    <p class="font-bold">${depoimento.nome}</p>
+    <p class="text-yellow-400 mb-2">${estrelasHTML}</p>
+    <p class="comentario-texto">${depoimento.comentario}</p>
+  `;
+
+  if (permiteEditar && userLogado && depoimento.uid === userLogado.uid) {
+    // Botões editar/excluir só aparecem para o próprio usuário logado
+    const btnEditar = document.createElement("button");
+    btnEditar.textContent = "Editar";
+    btnEditar.className = "bg-blue-500 text-white px-2 py-1 rounded mr-2";
+    btnEditar.addEventListener("click", () => editarComentario(div, depoimento));
+
+    const btnExcluir = document.createElement("button");
+    btnExcluir.textContent = "Excluir";
+    btnExcluir.className = "bg-red-500 text-white px-2 py-1 rounded";
+    btnExcluir.addEventListener("click", () => excluirComentario(depoimento.id));
+
+    div.appendChild(btnEditar);
+    div.appendChild(btnExcluir);
+  }
+
+  return div;
+}
+
+// =======================
+// Editar comentário
+// =======================
+function editarComentario(div, depoimento) {
+  const textoP = div.querySelector(".comentario-texto");
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = textoP.textContent;
+  input.className = "w-full p-1 border rounded mb-2";
+
+  // Botão salvar
+  const btnSalvar = document.createElement("button");
+  btnSalvar.textContent = "Salvar";
+  btnSalvar.className = "bg-green-500 text-white px-2 py-1 rounded mr-2";
+
+  // Botão cancelar
+  const btnCancelar = document.createElement("button");
+  btnCancelar.textContent = "Cancelar";
+  btnCancelar.className = "bg-gray-500 text-white px-2 py-1 rounded";
+
+  // Substitui texto por input
+  div.innerHTML = ""; // limpa div
+  div.appendChild(input);
+  div.appendChild(btnSalvar);
+  div.appendChild(btnCancelar);
+
+  btnSalvar.addEventListener("click", () => {
+    const novoComentario = input.value.trim();
+    if (!novoComentario) return alert("Comentário não pode ficar vazio!");
+
+    // Atualiza Firestore
+    db.collection("depoimentos").doc(depoimento.id).update({ comentario: novoComentario })
+      .then(() => carregarDepoimentos())
+      .catch(err => console.error("Erro ao atualizar comentário:", err));
+  });
+
+  btnCancelar.addEventListener("click", () => {
+    carregarDepoimentos(); // volta para visualização normal
+  });
+}
+
+// =======================
+// Excluir comentário
+// =======================
+function excluirComentario(id) {
+  if (!confirm("Deseja realmente excluir este comentário?")) return;
+  db.collection("depoimentos").doc(id).delete()
+    .then(() => carregarDepoimentos())
+    .catch(err => console.error("Erro ao excluir comentário:", err));
+}
+
+// =======================
+// Inicializa carregamento
+// =======================
+window.addEventListener("load", () => {
+  carregarDepoimentos(); // carrega comentários ao abrir página
+  atualizarUI();          // atualiza UI dependendo do login
+});
+
+// =======================
+// Contador (já existente, apenas lembrando que ele está em outro trecho)
+// =======================
+function iniciarContador(fimData) {
+  const countdown = document.getElementById("countdown-geral");
+  function atualizarContador() {
+    const agora = new Date().getTime();
+    const distancia = fimData - agora;
+
+    if (distancia < 0) {
+      countdown.textContent = "Oferta encerrada!";
+      clearInterval(intervalo);
+      return;
+    }
+
+    const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+    countdown.textContent = `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+  }
+
+  const intervalo = setInterval(atualizarContador, 1000);
+  atualizarContador();
+}
+
+// Exemplo de chamada: definir data final da oferta
+// iniciarContador(new Date("2025-12-31T23:59:59").getTime());

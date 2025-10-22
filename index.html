@@ -1,15 +1,18 @@
-<!-- index.html -->
+<!-- =========================
+     index.html
+     Página principal da landing page
+========================= -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8"> <!-- define encoding -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- responsividade -->
+  <meta charset="UTF-8"> <!-- define a codificação da página -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- garante responsividade -->
   <title>Seu Código. Seu Treino. Sua Saúde.</title>
 
-  <!-- Tailwind (utilitários CSS) -->
+  <!-- Tailwind CSS (utilitários) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- AOS (animações scroll) -->
+  <!-- AOS (animações no scroll) -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
   <!-- FontAwesome (ícones) -->
@@ -22,10 +25,11 @@
 
 <!-- =========================
      Hero Section
-     (imagem de topo + CTA)
+     Imagem de topo + CTA
 ========================= -->
 <section class="hero-section relative">
-  <img src="esteira.1.jpg" alt="Treino saudável para programadores"> <!-- imagem hero -->
+  <!-- imagem de fundo hero -->
+  <img src="esteira.1.jpg" alt="Treino saudável para programadores">
   <div class="hero-overlay flex flex-col justify-center items-center text-center">
     <h1 class="font-bold text-white text-4xl md:text-5xl mb-4" data-aos="fade-down">
       Transforme seu Corpo e sua Mente!
@@ -46,24 +50,28 @@
   <div class="container mx-auto px-4">
     <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">Escolha seu caminho para saúde e produtividade</h2>
     <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-      <!-- card 1 -->
+
+      <!-- Card 1: eBook -->
       <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up">
         <i class="fas fa-book text-indigo-600 text-3xl mb-4"></i>
         <h3 class="font-bold text-xl mb-2">Aprenda com o eBook</h3>
         <p>Descubra dicas práticas de postura, treinos rápidos e alimentação para programadores.</p>
       </div>
-      <!-- card 2 -->
+
+      <!-- Card 2: Treinos -->
       <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up" data-aos-delay="200">
         <i class="fas fa-dumbbell text-indigo-600 text-3xl mb-4"></i>
         <h3 class="font-bold text-xl mb-2">Treinos Personalizados</h3>
         <p>Planilhas adaptadas ao seu corpo e rotina para resultados rápidos e eficientes.</p>
       </div>
-      <!-- card 3 -->
+
+      <!-- Card 3: Acompanhamento -->
       <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up" data-aos-delay="400">
         <i class="fas fa-user-check text-indigo-600 text-3xl mb-4"></i>
         <h3 class="font-bold text-xl mb-2">Acompanhamento Profissional</h3>
         <p>Suporte direto para ajustar treinos, tirar dúvidas e garantir evolução contínua.</p>
       </div>
+
     </div>
   </div>
 </section>
@@ -74,7 +82,7 @@
 <section class="py-20 bg-indigo-600 text-white text-center">
   <h2 class="text-3xl md:text-4xl font-bold mb-4" data-aos="fade-down">⏰ Oferta Especial por Tempo Limitado!</h2>
   <p class="mb-8 text-lg md:text-xl" data-aos="fade-up">Garanta seu plano agora e transforme sua saúde antes que a promoção acabe!</p>
-  <div id="countdown-geral" class="countdown text-3xl font-bold"></div> <!-- contador será atualizado pelo JS -->
+  <div id="countdown-geral" class="countdown text-3xl font-bold"></div> <!-- contador atualizado pelo script.js -->
 </section>
 
 <!-- =========================
@@ -165,7 +173,7 @@
     <!-- Mensagem de boas-vindas / status do usuário -->
     <p id="msg-login" class="mb-4 text-yellow-600 font-semibold"></p>
 
-    <!-- Botão de login com Google (abriu popup do Firebase) -->
+    <!-- Botão de login com Google -->
     <button id="btn-google-login" class="bg-red-600 text-white px-6 py-2 rounded-full font-bold hover:bg-red-500 transition inline-flex items-center gap-2">
       <i class="fab fa-google"></i> Entrar com Google
     </button>
@@ -174,10 +182,8 @@
     <button id="btn-logout" class="bg-gray-700 text-white px-6 py-2 rounded-full font-bold hover:bg-gray-600 transition mt-4 hidden">Logout</button>
   </div>
 
-  <!-- Formulário de depoimento (OCULTO por padrão, só aparece para usuário logado) -->
+  <!-- Formulário de depoimento (só aparece para usuário logado) -->
   <form id="form-depoimento" class="max-w-md mx-auto mb-12 text-left hidden">
-    <!-- Nota: removemos campo "nome" — o nome será o displayName do usuário Google -->
-    <!-- Avaliação (estrelas) -->
     <label class="block mb-2 font-semibold">Avaliação:</label>
     <div class="flex mb-4" id="estrelas">
       <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="1">★</span>
@@ -187,7 +193,7 @@
       <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="5">★</span>
     </div>
 
-    <!-- Comentário (máx. 60 caracteres) -->
+    <!-- Comentário -->
     <label class="block mb-2 font-semibold" for="comentario">Comentário (máx. 60 caracteres):</label>
     <textarea id="comentario" rows="2" class="w-full p-2 mb-1 border rounded" placeholder="Escreva seu comentário" maxlength="60"></textarea>
 
@@ -198,7 +204,7 @@
   <!-- Feedback de envio -->
   <div id="feedback-comentario"></div>
 
-  <!-- Lista de depoimentos (carregada do Firestore) -->
+  <!-- Lista de depoimentos (Firestore + antigos) -->
   <div id="lista-depoimentos" class="max-w-3xl mx-auto space-y-6"></div>
 </section>
 
@@ -233,7 +239,7 @@
 </footer>
 
 <!-- =========================
-     SCRIPTS
+     Scripts
 ========================= -->
 
 <!-- AOS -->
@@ -243,7 +249,6 @@
 <script src="https://js.stripe.com/v3/"></script>
 
 <!-- Firebase compat libs (app, auth, firestore) -->
-<!-- usamos as versões compat para manter seu código simples e parecido com a versão anterior -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -251,7 +256,6 @@
 <script>
   // =======================
   // Configuração Firebase
-  // (substitua pelas suas credenciais se necessário)
   // =======================
   const firebaseConfig = {
     apiKey: "AIzaSyDucaT1FMVt1JbmH82l9E-57YbQ4wkaf1s",
@@ -261,13 +265,13 @@
     messagingSenderId: "63320297248",
     appId: "1:63320297248:web:1234567890abcdef"
   };
-  // Inicializa Firebase (app, auth e firestore)
+  // Inicializa Firebase
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();       // serviço de autenticação
-  const db = firebase.firestore();    // firestore para comentários
+  const auth = firebase.auth();       // autenticação
+  const db = firebase.firestore();    // firestore
 </script>
 
-<!-- script principal (seu script.js atualizado) -->
+<!-- script principal -->
 <script src="script.js"></script>
 
 <!-- Inicializa animações AOS -->
