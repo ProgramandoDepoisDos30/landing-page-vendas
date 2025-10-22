@@ -1,35 +1,32 @@
-<!-- =========================
-     index.html
-     Página principal da landing page
-========================= -->
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8"> <!-- define a codificação da página -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- garante responsividade -->
+  <meta charset="UTF-8"> <!-- Define a codificação de caracteres -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsividade em dispositivos móveis -->
   <title>Seu Código. Seu Treino. Sua Saúde.</title>
 
-  <!-- Tailwind CSS (utilitários) -->
+  <!-- Tailwind CSS (framework utilitário) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- AOS (animações no scroll) -->
+  <!-- AOS (animate on scroll) para animações ao rolar a página -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-  <!-- FontAwesome (ícones) -->
+  <!-- FontAwesome para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
-  <!-- Seu CSS personalizado -->
+  <!-- CSS personalizado -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+
+<body class="bg-gray-50 font-sans text-gray-800"> <!-- Corpo com fonte sans-serif e cor base -->
 
 <!-- =========================
      Hero Section
-     Imagem de topo + CTA
+     Imagem de topo + Call to Action
 ========================= -->
 <section class="hero-section relative">
-  <!-- imagem de fundo hero -->
-  <img src="esteira.1.jpg" alt="Treino saudável para programadores">
+  <img src="esteira.1.jpg" alt="Treino saudável para programadores"> <!-- Imagem principal -->
   <div class="hero-overlay flex flex-col justify-center items-center text-center">
     <h1 class="font-bold text-white text-4xl md:text-5xl mb-4" data-aos="fade-down">
       Transforme seu Corpo e sua Mente!
@@ -50,7 +47,7 @@
   <div class="container mx-auto px-4">
     <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">Escolha seu caminho para saúde e produtividade</h2>
     <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-
+      
       <!-- Card 1: eBook -->
       <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up">
         <i class="fas fa-book text-indigo-600 text-3xl mb-4"></i>
@@ -58,14 +55,14 @@
         <p>Descubra dicas práticas de postura, treinos rápidos e alimentação para programadores.</p>
       </div>
 
-      <!-- Card 2: Treinos -->
+      <!-- Card 2: Treinos Personalizados -->
       <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up" data-aos-delay="200">
         <i class="fas fa-dumbbell text-indigo-600 text-3xl mb-4"></i>
         <h3 class="font-bold text-xl mb-2">Treinos Personalizados</h3>
         <p>Planilhas adaptadas ao seu corpo e rotina para resultados rápidos e eficientes.</p>
       </div>
 
-      <!-- Card 3: Acompanhamento -->
+      <!-- Card 3: Acompanhamento Profissional -->
       <div class="bg-gray-100 p-6 rounded-xl shadow-md card-hover" data-aos="fade-up" data-aos-delay="400">
         <i class="fas fa-user-check text-indigo-600 text-3xl mb-4"></i>
         <h3 class="font-bold text-xl mb-2">Acompanhamento Profissional</h3>
@@ -82,7 +79,7 @@
 <section class="py-20 bg-indigo-600 text-white text-center">
   <h2 class="text-3xl md:text-4xl font-bold mb-4" data-aos="fade-down">⏰ Oferta Especial por Tempo Limitado!</h2>
   <p class="mb-8 text-lg md:text-xl" data-aos="fade-up">Garanta seu plano agora e transforme sua saúde antes que a promoção acabe!</p>
-  <div id="countdown-geral" class="countdown text-3xl font-bold"></div> <!-- contador atualizado pelo script.js -->
+  <div id="countdown-geral" class="countdown text-3xl font-bold"></div> <!-- Contador atualizado pelo script.js -->
 </section>
 
 <!-- =========================
@@ -92,9 +89,13 @@
   <div class="container mx-auto px-4 max-w-4xl text-center">
     <h2 class="text-3xl md:text-4xl font-bold mb-6">Sobre o Autor</h2>
     <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+      
+      <!-- Avatar do autor -->
       <div class="w-48 h-48 mx-auto md:mx-0 rounded-full overflow-hidden bg-black shadow-lg flex items-center justify-center">
         <img src="avatar.png" alt="Avatar do autor" class="w-full h-full object-cover">
       </div>
+      
+      <!-- Texto do autor -->
       <div class="flex-1 text-left">
         <p class="text-lg md:text-xl mb-4 leading-relaxed">
           💪 Com <span class="font-bold">mais de 8 anos de experiência</span> como Personal Trainer e formado em <span class="font-bold">Educação Física</span>, eu agora aplico todo meu conhecimento no universo da programação.
@@ -163,26 +164,23 @@
 
 <!-- =========================
      Depoimentos
-     (novo fluxo: LOGIN SOMENTE COM GOOGLE -> postar comentário)
+     (Login Google obrigatório para postar comentário)
 ========================= -->
 <section class="py-20 bg-gray-50 text-gray-900 text-center" id="avaliacoes" data-aos="fade-up">
   <h2 class="text-3xl font-bold mb-8">Veja como outros programadores estão evoluindo</h2>
 
-  <!-- Auth area: botão de login Google + logout + mensagem de usuário -->
+  <!-- Área de autenticação -->
   <div id="auth-area" class="max-w-md mx-auto mb-6">
-    <!-- Mensagem de boas-vindas / status do usuário -->
-    <p id="msg-login" class="mb-4 text-yellow-600 font-semibold"></p>
+    <p id="msg-login" class="mb-4 text-yellow-600 font-semibold"></p> <!-- Mensagem de boas-vindas -->
 
-    <!-- Botão de login com Google -->
     <button id="btn-google-login" class="bg-red-600 text-white px-6 py-2 rounded-full font-bold hover:bg-red-500 transition inline-flex items-center gap-2">
       <i class="fab fa-google"></i> Entrar com Google
     </button>
 
-    <!-- Botão de logout (escondido até o usuário logar) -->
     <button id="btn-logout" class="bg-gray-700 text-white px-6 py-2 rounded-full font-bold hover:bg-gray-600 transition mt-4 hidden">Logout</button>
   </div>
 
-  <!-- Formulário de depoimento (só aparece para usuário logado) -->
+  <!-- Formulário de depoimento (oculto até login) -->
   <form id="form-depoimento" class="max-w-md mx-auto mb-12 text-left hidden">
     <label class="block mb-2 font-semibold">Avaliação:</label>
     <div class="flex mb-4" id="estrelas">
@@ -193,19 +191,15 @@
       <span class="estrela cursor-pointer text-gray-300 text-2xl" data-valor="5">★</span>
     </div>
 
-    <!-- Comentário -->
     <label class="block mb-2 font-semibold" for="comentario">Comentário (máx. 60 caracteres):</label>
     <textarea id="comentario" rows="2" class="w-full p-2 mb-1 border rounded" placeholder="Escreva seu comentário" maxlength="60"></textarea>
 
-    <!-- Botão enviar -->
     <button type="submit" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition inline-block">Enviar Depoimento</button>
   </form>
 
-  <!-- Feedback de envio -->
-  <div id="feedback-comentario"></div>
+  <div id="feedback-comentario"></div> <!-- Feedback de envio -->
 
-  <!-- Lista de depoimentos (Firestore + antigos) -->
-  <div id="lista-depoimentos" class="max-w-3xl mx-auto space-y-6"></div>
+  <div id="lista-depoimentos" class="max-w-3xl mx-auto space-y-6"></div> <!-- Lista de depoimentos -->
 </section>
 
 <!-- =========================
@@ -239,42 +233,35 @@
 </footer>
 
 <!-- =========================
-     Scripts
+     SCRIPTS
 ========================= -->
 
 <!-- AOS -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-<!-- Stripe (client) -->
+<!-- Stripe -->
 <script src="https://js.stripe.com/v3/"></script>
 
-<!-- Firebase compat libs (app, auth, firestore) -->
+<!-- Firebase compat libs -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+<!-- Configuração Firebase (substitua credenciais se necessário) -->
 <script>
-  // =======================
-  // Configuração Firebase
-  // =======================
   const firebaseConfig = {
-    apiKey: "AIzaSyDucaT1FMVt1JbmH82l9E-57YbQ4wkaf1s",
-    authDomain: "lading-page-vendas.firebaseapp.com",
-    projectId: "lading-page-vendas",
-    storageBucket: "lading-page-vendas.firebasestorage.app",
-    messagingSenderId: "63320297248",
-    appId: "1:63320297248:web:1234567890abcdef"
+    apiKey: "AIzaSyDucaT1FMVt1JbmH82l0XXXXXX",
+    authDomain: "seuprojeto.firebaseapp.com",
+    projectId: "seuprojeto",
+    storageBucket: "seuprojeto.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:xxxxxx"
   };
-  // Inicializa Firebase
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();       // autenticação
-  const db = firebase.firestore();    // firestore
 </script>
 
-<!-- script principal -->
+<!-- Script principal -->
 <script src="script.js"></script>
 
-<!-- Inicializa animações AOS -->
-<script> AOS.init(); </script>
 </body>
 </html>
