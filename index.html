@@ -70,6 +70,7 @@
 
 <!-- =========================
      Contador Persistente
+     Elemento com id="countdown-geral" é atualizado pelo script.js
 ========================= -->
 <section class="py-20 bg-indigo-600 text-white text-center">
   <h2 class="text-3xl md:text-4xl font-bold mb-4" data-aos="fade-down">⏰ Oferta Especial por Tempo Limitado!</h2>
@@ -104,6 +105,7 @@
 
 <!-- =========================
      Planos (comprar -> Stripe)
+     (botões com ids: btn-ebook, btn-planilhas2, btn-planilhas3 usados no script.js)
 ========================= -->
 <section class="py-20 bg-gray-50 text-gray-900 text-center" id="planos" data-aos="fade-up">
   <h2 class="text-3xl font-bold mb-12">Escolha seu Plano Ideal</h2>
@@ -156,6 +158,15 @@
 <!-- =========================
      Depoimentos
      (novo fluxo: LOGIN SOMENTE COM GOOGLE -> postar comentário)
+     Elementos importantes para o JS:
+       - btn-google-login : botão de login Google
+       - btn-logout       : botão de logout
+       - msg-login        : mostra "Olá, Nome"
+       - form-depoimento  : formulário (exibido apenas para logados)
+       - estrelas (class "estrela") : seleção de avaliação
+       - comentario (id 'comentario') : textarea do comentário
+       - feedback-comentario : área para mensagens de erro/sucesso
+       - lista-depoimentos : container onde os comentários são renderizados
 ========================= -->
 <section class="py-20 bg-gray-50 text-gray-900 text-center" id="avaliacoes" data-aos="fade-up">
   <h2 class="text-3xl font-bold mb-8">Veja como outros programadores estão evoluindo</h2>
@@ -234,6 +245,8 @@
 
 <!-- =========================
      SCRIPTS
+     Importante: o script.js que entra após esta seção
+     espera que estes scripts (Firebase, Stripe, AOS) já estejam carregados.
 ========================= -->
 
 <!-- AOS -->

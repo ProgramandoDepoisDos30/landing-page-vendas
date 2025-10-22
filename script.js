@@ -1,24 +1,49 @@
-// =========================================
-// SCRIPT.JS COMPLETO - LANDING PAGE ATUALIZADO
-// =========================================
-// ✅ Agora com funções para EDITAR e EXCLUIR comentários (somente o autor)
-// =========================================
-
+// script.js
+// ===================================================================================
+// LANDING PAGE - script.js
+// - Contador persistente (fase 1/2)
+// - Depoimentos com Firestore (listagem em tempo real via onSnapshot, sem duplicidade)
+// - Login com Google (Firebase Auth)
+// - Envio de depoimentos (apenas para usuários logados)
+// - Edição/Exclusão de comentários (apenas pelo próprio autor)
+// - Stripe Checkout (criarCheckout mantém a mesma interface que você já usa)
+// - Comentários linha a linha para estudo
+// ===================================================================================
 
 // -----------------------
-// Contador Persistente
+// Elementos do DOM usados pelo script
 // -----------------------
 const countdown = document.getElementById('countdown-geral'); // elemento do contador
-const contadorKey = 'contadorOficial'; // chave no localStorage para salvar o estado
+const formDepoimento = document.getElementById('form-depoimento'); // formulário de envio
+const listaDepoimentos = document.getElementById('lista-depoimentos'); // container da lista
+const feedbackDiv = document.getElementById('feedback-comentario'); // área de feedback (erro/sucesso)
+const estrelasNodes = document.querySelectorAll('.estrela'); // elementos de estrela (seleção)
+const btnGoogle = document.getElementById('btn-google-login'); // botão login Google
+const btnLogout = document.getElementById('btn-logout'); // botão logout
+const msgLogin = document.getElementById('msg-login'); // mensagem de saudação
 
+// -----------------------
+// Variáveis internas / controle
+// -----------------------
+let estrelasSelecionadas = 0;           // nota selecionada no formulário
+let unsubscribeComments = null;        // função para cancelar o listener onSnapshot
+// Observação: usamos unsubscribeComments para garantir que criamos NO MÁXIMO 1 listener
+// ativo no Firestore. Isso evita a duplicação de renderizações.
+
+// -----------------------
+// CONTADOR PERSISTENTE (suas fases 1 e 2)
+// -----------------------
 // tempos das fases (em segundos)
 const tempoFase1 = 2*3600 + 59*60 + 59; // 2h 59m 59s
 const tempoFase2 = 9*60 + 59;           // 9m 59s
 
-// carrega estado salvo (ou inicia com fase 1)
+// chave no localStorage para persistência do contador
+const contadorKey = 'contadorOficial';
+
+// carrega estado salvo ou inicializa com fase 1
 let estado = JSON.parse(localStorage.getItem(contadorKey)) || { fase: 1, segundosRestantes: tempoFase1 };
 
-// formata segundos em HH:MM:SS
+// formata segundos em HH:MM:SS (útil para mostrar)
 function formatTime(totalSegundos) {
   const h = Math.floor(totalSegundos / 3600);
   const m = Math.floor((totalSegundos % 3600) / 60);
@@ -26,7 +51,7 @@ function formatTime(totalSegundos) {
   return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
-// atualiza o contador a cada segundo
+// atualiza o contador (chamada a cada segundo)
 function atualizarContador() {
   if (!countdown) return;
 
@@ -35,14 +60,17 @@ function atualizarContador() {
       estado.segundosRestantes--;
     } else {
       if (estado.fase === 1) {
+        // Ao terminar fase 1, exibe mensagem curta e passa para fase 2
         countdown.innerHTML = "O tempo da sua oferta acabou, mas vou liberar essa condição por pouco tempo ainda!";
         estado.fase = 2;
         estado.segundosRestantes = tempoFase2;
         localStorage.setItem(contadorKey, JSON.stringify(estado));
         clearInterval(interval);
+        // pausa 3s (mostra a mensagem) e recomeça contagem
         setTimeout(() => { interval = setInterval(atualizarContador, 1000); }, 3000);
         return;
       } else if (estado.fase === 2) {
+        // Fase 2 terminou: oferta encerrada
         countdown.innerHTML = "Oferta Encerrada!";
         clearInterval(interval);
         return;
@@ -50,163 +78,183 @@ function atualizarContador() {
     }
   }
 
+  // atualiza exibição e salva estado no localStorage
   countdown.innerHTML = formatTime(estado.segundosRestantes);
   localStorage.setItem(contadorKey, JSON.stringify(estado));
 }
 
 let interval = setInterval(atualizarContador, 1000);
-atualizarContador();
-
+atualizarContador(); // inicia imediatamente
 
 // -----------------------
-// Depoimentos (Firestore)
+// LÓGICA DAS ESTRELAS (seleção visual + estado)
 // -----------------------
-const formDepoimento = document.getElementById('form-depoimento');
-const listaDepoimentos = document.getElementById('lista-depoimentos');
-const feedbackDiv = document.getElementById('feedback-comentario');
-let estrelasSelecionadas = 0;
-
-// Seleção de estrelas
-document.querySelectorAll('.estrela').forEach(star => {
+// faz a interação visual das estrelas e guarda o número escolhido em estrelasSelecionadas
+estrelasNodes.forEach(star => {
   star.addEventListener('click', () => {
-    estrelasSelecionadas = parseInt(star.dataset.valor, 10);
-    document.querySelectorAll('.estrela').forEach(s => {
+    const val = parseInt(star.dataset.valor, 10);
+    estrelasSelecionadas = val;
+    // atualiza visuais
+    estrelasNodes.forEach(s => {
       s.classList.remove('text-yellow-400');
       s.classList.add('text-gray-300');
     });
-    for (let i = 0; i < estrelasSelecionadas; i++) {
-      document.querySelectorAll('.estrela')[i].classList.add('text-yellow-400');
-      document.querySelectorAll('.estrela')[i].classList.remove('text-gray-300');
+    for (let i = 0; i < val; i++) {
+      estrelasNodes[i].classList.remove('text-gray-300');
+      estrelasNodes[i].classList.add('text-yellow-400');
     }
   });
 });
 
-
 // -----------------------
-// Função principal para carregar depoimentos
+// FUNÇÃO: subscribir (ou reinscrever) nos comentários do Firestore
+// - Usa onSnapshot para atualização em tempo real
+// - Cancela listener anterior se já existir (evita duplicidade)
 // -----------------------
-async function renderizarDepoimentos() {
-  if (!listaDepoimentos) return;
-  listaDepoimentos.innerHTML = ''; // limpa antes de renderizar
-
-  try {
-    // pega usuário logado (pode ser null)
-    const user = auth.currentUser;
-
-    // busca todos os comentários no Firestore (mais recentes primeiro)
-    const snapshot = await db.collection("comentarios").orderBy("criadoEm", "desc").get();
-
-    // percorre os comentários
-    snapshot.forEach(docSnap => {
-      const dep = docSnap.data();
-      const id = docSnap.id;
-
-      // cria container do depoimento
-      const div = document.createElement('div');
-      div.classList.add('bg-gray-100', 'p-4', 'rounded-lg', 'shadow-md', 'relative', 'mb-3');
-
-      // renderiza conteúdo principal (nome + estrelas + comentário)
-      let html = `
-        <p class="font-bold">${dep.nome || 'Usuário'} 
-          <span class="text-yellow-400">
-            ${'★'.repeat(dep.estrelas || 0)}${'☆'.repeat(5 - (dep.estrelas || 0))}
-          </span>
-        </p>
-        <p id="texto-${id}">${dep.comentario || ''}</p>
-      `;
-
-      // se o usuário logado for o autor, mostra botões Editar/Excluir
-      if (user && user.uid === dep.uid) {
-        html += `
-          <div class="absolute top-2 right-2 space-x-2">
-            <button class="bg-blue-500 text-white text-sm px-2 py-1 rounded editar-btn" data-id="${id}">✏️ Editar</button>
-            <button class="bg-red-500 text-white text-sm px-2 py-1 rounded excluir-btn" data-id="${id}">🗑️ Excluir</button>
-          </div>
-        `;
-      }
-
-      div.innerHTML = html;
-      listaDepoimentos.appendChild(div);
-    });
-
-    // adiciona eventos aos botões (após renderizar)
-    document.querySelectorAll('.editar-btn').forEach(btn => {
-      btn.addEventListener('click', () => editarComentario(btn.dataset.id));
-    });
-    document.querySelectorAll('.excluir-btn').forEach(btn => {
-      btn.addEventListener('click', () => excluirComentario(btn.dataset.id));
-    });
-
-  } catch (err) {
-    console.error("Erro ao carregar comentários:", err);
+function subscribeToComments() {
+  // Se já existe um listener ativo, cancela antes de criar outro
+  if (typeof unsubscribeComments === 'function') {
+    unsubscribeComments(); // cancela listener anterior
+    unsubscribeComments = null;
   }
+
+  // Cria novo listener em tempo real
+  unsubscribeComments = db.collection("comentarios")
+    .orderBy("criadoEm", "desc")
+    .onSnapshot(snapshot => {
+      // A cada mudança no servidor, reconstruímos a lista inteira (limpamos e re-renderizamos)
+      // Isso garante que a UI reflita exatamente o estado no Firestore sem duplicações.
+      if (!listaDepoimentos) return;
+      listaDepoimentos.innerHTML = ''; // limpa lista antes de renderizar
+
+      // percorre documentos (ordem definida pela query)
+      snapshot.forEach(docSnap => {
+        const dep = docSnap.data();   // dados (nome, uid, comentario, estrelas)
+        const id = docSnap.id;        // id do documento (usado para editar/excluir)
+        // container principal do depoimento
+        const div = document.createElement('div');
+        div.classList.add('bg-gray-100','p-4','rounded-lg','shadow-md','relative','mb-3');
+
+        // monta a parte estática: nome e estrelas
+        const nome = dep.nome || 'Usuário';
+        const estrelasTexto = `${'★'.repeat(dep.estrelas || 0)}${'☆'.repeat(5 - (dep.estrelas || 0))}`;
+        const pNome = document.createElement('p');
+        pNome.classList.add('font-bold');
+        pNome.innerHTML = `${nome} <span class="text-yellow-400">${estrelasTexto}</span>`;
+
+        // texto do comentário (colocamos id para permitir atualização direta ao editar)
+        const pComentario = document.createElement('p');
+        pComentario.id = `texto-${id}`;
+        pComentario.textContent = dep.comentario || '';
+
+        div.appendChild(pNome);
+        div.appendChild(pComentario);
+
+        // Se o comentário tiver um uid (postado por um usuário autenticado) e o usuário atual
+        // for o mesmo, exibimos botões Editar/Excluir.
+        const user = auth.currentUser;
+        if (dep.uid && user && user.uid === dep.uid) {
+          // container dos botões
+          const btnContainer = document.createElement('div');
+          btnContainer.classList.add('mt-2','flex','gap-2','absolute','top-2','right-2');
+
+          // botão EDITAR
+          const btnEditar = document.createElement('button');
+          btnEditar.textContent = '✏️ Editar';
+          btnEditar.classList.add('bg-blue-500','text-white','text-sm','px-2','py-1','rounded','hover:bg-blue-400','transition');
+          // quando clicar em editar, chama função editarComentario com id e texto atual
+          btnEditar.addEventListener('click', () => editarComentario(id, dep.comentario || ''));
+
+          // botão EXCLUIR
+          const btnExcluir = document.createElement('button');
+          btnExcluir.textContent = '🗑️ Excluir';
+          btnExcluir.classList.add('bg-red-500','text-white','text-sm','px-2','py-1','rounded','hover:bg-red-400','transition');
+          btnExcluir.addEventListener('click', () => excluirComentario(id));
+
+          btnContainer.appendChild(btnEditar);
+          btnContainer.appendChild(btnExcluir);
+          div.appendChild(btnContainer);
+        }
+
+        // adiciona o depoimento à lista principal
+        listaDepoimentos.appendChild(div);
+      });
+    }, err => {
+      // erro no listener em tempo real
+      console.error("Erro no listener de comentários:", err);
+    });
 }
 
+// no carregamento inicial da página, iniciamos a assinatura para receber comentários
+// Isso garante que, mesmo sem login, os comentários antigos (sem uid) aparecem.
+// Quando o usuário logar, onAuthStateChanged também chamará subscribeToComments()
+// e o unsubscribe evitará múltiplas assinaturas.
+subscribeToComments();
 
 // -----------------------
-// Função para editar comentário
+// Função: editar comentário (só deve ser chamada por quem é autor)
+// - abre prompt com texto atual, atualiza Firestore e o listener atualiza a UI
 // -----------------------
-async function editarComentario(id) {
+async function editarComentario(docId, textoAtual) {
   try {
-    // busca documento pelo ID
-    const docRef = db.collection("comentarios").doc(id);
-    const docSnap = await docRef.get();
-    if (!docSnap.exists) return alert("Comentário não encontrado!");
-
-    const dep = docSnap.data();
-    const novoTexto = prompt("Edite seu comentário:", dep.comentario || "");
+    // prompt simples para edição (você pode trocar por modal customizado)
+    const novoTexto = prompt("Edite seu comentário:", textoAtual);
     if (novoTexto === null) return; // usuário cancelou
-
     const textoLimpo = novoTexto.trim();
-    if (!textoLimpo) return alert("O comentário não pode ficar vazio.");
+    if (textoLimpo.length === 0) { alert("Comentário não pode ficar vazio."); return; }
 
-    // atualiza no Firestore
-    await docRef.update({ comentario: textoLimpo });
-    alert("Comentário atualizado com sucesso!");
+    // atualiza no Firestore (só o campo comentario)
+    await db.collection("comentarios").doc(docId).update({ comentario: textoLimpo });
 
-    // atualiza na tela
-    document.getElementById(`texto-${id}`).textContent = textoLimpo;
-
+    // NÃO precisa chamar renderizarDepoimentos(); o onSnapshot atualizará automaticamente
+    // Podemos opcionalmente mostrar um feedback curto
+    feedbackDiv.textContent = "Comentário atualizado com sucesso!";
+    feedbackDiv.className = 'text-green-600 font-semibold mt-2';
+    setTimeout(() => { feedbackDiv.textContent = ''; feedbackDiv.className = ''; }, 2500);
   } catch (err) {
     console.error("Erro ao editar comentário:", err);
-    alert("Erro ao editar comentário.");
+    alert("Erro ao atualizar comentário. Verifique o console.");
   }
 }
 
-
 // -----------------------
-// Função para excluir comentário
+// Função: excluir comentário (só autor)
 // -----------------------
-async function excluirComentario(id) {
-  if (!confirm("Tem certeza que deseja excluir seu comentário?")) return;
-
+async function excluirComentario(docId) {
+  if (!confirm("Deseja realmente excluir seu comentário?")) return;
   try {
-    await db.collection("comentarios").doc(id).delete();
-    alert("Comentário excluído com sucesso!");
-    renderizarDepoimentos(); // recarrega lista
+    await db.collection("comentarios").doc(docId).delete();
+    // onSnapshot irá remover o item da UI automaticamente
+    feedbackDiv.textContent = "Comentário excluído com sucesso!";
+    feedbackDiv.className = 'text-green-600 font-semibold mt-2';
+    setTimeout(() => { feedbackDiv.textContent = ''; feedbackDiv.className = ''; }, 2500);
   } catch (err) {
     console.error("Erro ao excluir comentário:", err);
-    alert("Erro ao excluir comentário.");
+    alert("Erro ao excluir comentário. Verifique o console.");
   }
 }
 
-
 // -----------------------
-// Enviar novo comentário
+// Submissão do formulário de depoimento
 // -----------------------
 formDepoimento?.addEventListener('submit', async (e) => {
-  e.preventDefault();
+  e.preventDefault(); // evita reload
+
+  // pega texto do textarea
   const comentario = document.getElementById('comentario').value.trim();
 
+  // limpa feedback prévio
   feedbackDiv.textContent = '';
   feedbackDiv.className = '';
 
+  // validações básicas
   if (!comentario || estrelasSelecionadas === 0) {
     feedbackDiv.textContent = "Preencha comentário e selecione uma avaliação.";
     feedbackDiv.classList.add('text-red-600','font-semibold','mt-2');
     return;
   }
 
+  // garante que usuário esteja logado
   const user = auth.currentUser;
   if (!user) {
     feedbackDiv.textContent = "Você precisa estar logado para enviar um depoimento.";
@@ -215,7 +263,7 @@ formDepoimento?.addEventListener('submit', async (e) => {
   }
 
   try {
-    // salva novo comentário
+    // cria novo documento em 'comentarios'
     await db.collection("comentarios").add({
       nome: user.displayName || user.email || 'Usuário',
       uid: user.uid,
@@ -224,6 +272,7 @@ formDepoimento?.addEventListener('submit', async (e) => {
       criadoEm: firebase.firestore.FieldValue.serverTimestamp()
     });
 
+    // limpa formulário visualmente
     document.getElementById('comentario').value = '';
     estrelasSelecionadas = 0;
     document.querySelectorAll('.estrela').forEach(s => {
@@ -231,25 +280,23 @@ formDepoimento?.addEventListener('submit', async (e) => {
       s.classList.add('text-gray-300');
     });
 
+    // feedback de sucesso
     feedbackDiv.textContent = "Comentário enviado com sucesso!";
     feedbackDiv.classList.add('text-green-600','font-semibold','mt-2');
 
-    renderizarDepoimentos();
+    // NÃO chamamos renderizarDepoimentos() — o onSnapshot (subscribeToComments)
+    // receberá o novo documento e atualizará a lista automaticamente.
   } catch (err) {
-    console.error(err);
+    console.error("Erro ao enviar comentário:", err);
     feedbackDiv.textContent = "Erro ao enviar comentário.";
     feedbackDiv.classList.add('text-red-600','font-semibold','mt-2');
   }
 });
 
-
 // -----------------------
-// Firebase Auth (Google only)
+// Firebase Auth (Google only) - login, logout e controle de UI
 // -----------------------
-const btnGoogle = document.getElementById('btn-google-login');
-const btnLogout = document.getElementById('btn-logout');
-const msgLogin = document.getElementById('msg-login');
-
+// botão login Google: abre popup
 btnGoogle?.addEventListener('click', () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
@@ -259,7 +306,10 @@ btnGoogle?.addEventListener('click', () => {
       btnGoogle.classList.add('hidden');
       btnLogout.classList.remove('hidden');
       formDepoimento?.classList.remove('hidden');
-      renderizarDepoimentos(); // atualiza comentários com botões do autor
+
+      // Ao logar, re-subscrevemos para garantir que o listener leva em conta o novo auth state
+      // (unsubscribe evita múltiplas assinaturas)
+      subscribeToComments();
     })
     .catch(error => {
       console.error("Erro ao logar com Google:", error);
@@ -267,47 +317,58 @@ btnGoogle?.addEventListener('click', () => {
     });
 });
 
+// botão logout
 btnLogout?.addEventListener('click', () => {
   auth.signOut().then(() => {
     msgLogin.textContent = '';
     btnGoogle.classList.remove('hidden');
     btnLogout.classList.add('hidden');
     formDepoimento?.classList.add('hidden');
-    renderizarDepoimentos(); // recarrega sem botões de edição
+
+    // após logout, reinscreve para garantir consistência (comments visíveis sem botões edit/delete)
+    subscribeToComments();
   }).catch(err => {
     console.error("Erro no logout:", err);
     alert("Erro ao efetuar logout: " + (err.message || err));
   });
 });
 
-auth.onAuthStateChanged(user => {
+// Observa mudanças de autenticação (mantém sessão entre reloads).
+// Isso garante que quando a página recarregar, UI + assinaturas sejam consistentes.
+auth.onAuthStateChanged((user) => {
   if (user) {
+    // usuário logado -> ajusta UI
     msgLogin.textContent = `Olá, ${user.displayName || user.email}!`;
     btnGoogle.classList.add('hidden');
     btnLogout.classList.remove('hidden');
     formDepoimento?.classList.remove('hidden');
   } else {
+    // usuário deslogado -> ajusta UI
     msgLogin.textContent = '';
     btnGoogle.classList.remove('hidden');
     btnLogout.classList.add('hidden');
     formDepoimento?.classList.add('hidden');
   }
-  renderizarDepoimentos(); // atualiza lista conforme login
+
+  // sempre re-subscreve ao mudar auth state para atualizar visibilidade de botões
+  // unsubscribe dentro da função evita múltiplos listeners.
+  subscribeToComments();
 });
 
-
 // -----------------------
-// Inicializa AOS
+// Inicializa AOS (animações - já referenciado no HTML)
 // -----------------------
 AOS.init();
 
-
 // -----------------------
-// Stripe Checkout
+// STRIPE CHECKOUT (mantive igual ao seu código original)
+// - A função criarCheckout assume que você possui um endpoint backend '/api/checkout'
+// - As chaves e endpoints continuam como você já configurou no index.html
 // -----------------------
 const STRIPE_PUBLISHABLE_KEY = "pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2u5ptTTZKQRooWIMLVjjbjHHtq7lxAMoUw9fc6Q8wY0VgtVTn2004zFVloIo"; 
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
+/* cria sessão chamado /api/checkout (o backend precisa existir em produção) */
 async function criarCheckout(produto, btn) {
   if (!stripe) {
     alert('Stripe não inicializado.');
@@ -349,6 +410,7 @@ async function criarCheckout(produto, btn) {
   }
 }
 
+/* associa botões às ações de checkout (mantive ids existentes) */
 document.getElementById('btn-ebook')?.addEventListener('click', (e) => criarCheckout('ebook', e.currentTarget));
 document.getElementById('btn-planilhas2')?.addEventListener('click', (e) => criarCheckout('planilhas2', e.currentTarget));
 document.getElementById('btn-planilhas3')?.addEventListener('click', (e) => criarCheckout('planilhas3', e.currentTarget));
