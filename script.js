@@ -7,6 +7,7 @@
 // - Envio de depoimentos (apenas para usuários logados)
 // - Edição/Exclusão de comentários (apenas pelo próprio autor)
 // - Stripe Checkout (criarCheckout mantém a mesma interface que você já usa)
+// - Correção do estado dos botões Stripe ao voltar da página
 // - Comentários linha a linha para estudo
 // ===================================================================================
 
@@ -89,7 +90,6 @@ atualizarContador(); // inicia imediatamente
 // -----------------------
 // LÓGICA DAS ESTRELAS (seleção visual + estado)
 // -----------------------
-// faz a interação visual das estrelas e guarda o número escolhido em estrelasSelecionadas
 estrelasNodes.forEach(star => {
   star.addEventListener('click', () => {
     const val = parseInt(star.dataset.valor, 10);
@@ -108,40 +108,31 @@ estrelasNodes.forEach(star => {
 
 // -----------------------
 // FUNÇÃO: subscribir (ou reinscrever) nos comentários do Firestore
-// - Usa onSnapshot para atualização em tempo real
-// - Cancela listener anterior se já existir (evita duplicidade)
 // -----------------------
 function subscribeToComments() {
-  // Se já existe um listener ativo, cancela antes de criar outro
   if (typeof unsubscribeComments === 'function') {
-    unsubscribeComments(); // cancela listener anterior
+    unsubscribeComments();
     unsubscribeComments = null;
   }
 
-  // Cria novo listener em tempo real
   unsubscribeComments = db.collection("comentarios")
     .orderBy("criadoEm", "desc")
     .onSnapshot(snapshot => {
-      // A cada mudança no servidor, reconstruímos a lista inteira (limpamos e re-renderizamos)
       if (!listaDepoimentos) return;
-      listaDepoimentos.innerHTML = ''; // limpa lista antes de renderizar
+      listaDepoimentos.innerHTML = '';
 
-      // percorre documentos (ordem definida pela query)
       snapshot.forEach(docSnap => {
-        const dep = docSnap.data();   // dados (nome, uid, comentario, estrelas)
-        const id = docSnap.id;        // id do documento (usado para editar/excluir)
-        // container principal do depoimento
+        const dep = docSnap.data();
+        const id = docSnap.id;
         const div = document.createElement('div');
         div.classList.add('bg-gray-100','p-4','rounded-lg','shadow-md','relative','mb-3');
 
-        // monta a parte estática: nome e estrelas
         const nome = dep.nome || 'Usuário';
         const estrelasTexto = `${'★'.repeat(dep.estrelas || 0)}${'☆'.repeat(5 - (dep.estrelas || 0))}`;
         const pNome = document.createElement('p');
         pNome.classList.add('font-bold');
         pNome.innerHTML = `${nome} <span class="text-yellow-400">${estrelasTexto}</span>`;
 
-        // texto do comentário (colocamos id para permitir atualização direta ao editar)
         const pComentario = document.createElement('p');
         pComentario.id = `texto-${id}`;
         pComentario.textContent = dep.comentario || '';
@@ -149,22 +140,16 @@ function subscribeToComments() {
         div.appendChild(pNome);
         div.appendChild(pComentario);
 
-        // Se o comentário tiver um uid (postado por um usuário autenticado) e o usuário atual
-        // for o mesmo, exibimos botões Editar/Excluir.
         const user = auth.currentUser;
         if (dep.uid && user && user.uid === dep.uid) {
-          // container dos botões
           const btnContainer = document.createElement('div');
           btnContainer.classList.add('mt-2','flex','gap-2','absolute','top-2','right-2');
 
-          // botão EDITAR
           const btnEditar = document.createElement('button');
           btnEditar.textContent = '✏️ Editar';
           btnEditar.classList.add('bg-blue-500','text-white','text-sm','px-2','py-1','rounded','hover:bg-blue-400','transition');
-          // quando clicar em editar, chama função editarComentario com id e texto atual
           btnEditar.addEventListener('click', () => editarComentario(id, dep.comentario || ''));
 
-          // botão EXCLUIR
           const btnExcluir = document.createElement('button');
           btnExcluir.textContent = '🗑️ Excluir';
           btnExcluir.classList.add('bg-red-500','text-white','text-sm','px-2','py-1','rounded','hover:bg-red-400','transition');
@@ -175,21 +160,17 @@ function subscribeToComments() {
           div.appendChild(btnContainer);
         }
 
-        // adiciona o depoimento à lista principal
         listaDepoimentos.appendChild(div);
       });
     }, err => {
-      // erro no listener em tempo real
       console.error("Erro no listener de comentários:", err);
     });
 }
 
-// no carregamento inicial da página, iniciamos a assinatura para receber comentários
 subscribeToComments();
 
 // -----------------------
-// Função: editar comentário (só deve ser chamada por quem é autor)
-// - abre modal com textarea para edição e salva no Firestore
+// Função: editar comentário
 // -----------------------
 async function editarComentario(docId, textoAtual) {
   const modal = document.getElementById('modal-editar');
@@ -197,17 +178,15 @@ async function editarComentario(docId, textoAtual) {
   const btnSave = document.getElementById('modal-save');
   const btnCancel = document.getElementById('modal-cancel');
 
-  textarea.value = textoAtual;       // insere texto atual no modal
-  modal.classList.remove('hidden');  // mostra o modal
-  modal.classList.add('flex');       // ativa display flex
+  textarea.value = textoAtual;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
 
-  // Cancelar edição
   btnCancel.onclick = () => {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
   };
 
-  // Salvar edição
   btnSave.onclick = async () => {
     const textoLimpo = textarea.value.trim();
     if (textoLimpo.length === 0) {
@@ -231,7 +210,7 @@ async function editarComentario(docId, textoAtual) {
 }
 
 // -----------------------
-// Função: excluir comentário (só autor)
+// Função: excluir comentário
 // -----------------------
 async function excluirComentario(docId) {
   if (!confirm("Deseja realmente excluir seu comentário?")) return;
@@ -250,7 +229,7 @@ async function excluirComentario(docId) {
 // Submissão do formulário de depoimento
 // -----------------------
 formDepoimento?.addEventListener('submit', async (e) => {
-  e.preventDefault(); // evita reload
+  e.preventDefault();
 
   const comentario = document.getElementById('comentario').value.trim();
   feedbackDiv.textContent = '';
@@ -278,7 +257,6 @@ formDepoimento?.addEventListener('submit', async (e) => {
       criadoEm: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    // limpa formulário visualmente
     document.getElementById('comentario').value = '';
     estrelasSelecionadas = 0;
     document.querySelectorAll('.estrela').forEach(s => {
@@ -398,3 +376,25 @@ async function criarCheckout(produto, btn) {
 document.getElementById('btn-ebook')?.addEventListener('click', (e) => criarCheckout('ebook', e.currentTarget));
 document.getElementById('btn-planilhas2')?.addEventListener('click', (e) => criarCheckout('planilhas2', e.currentTarget));
 document.getElementById('btn-planilhas3')?.addEventListener('click', (e) => criarCheckout('planilhas3', e.currentTarget));
+
+// ========================
+// Corrige estado dos botões Stripe ao voltar da página
+// ========================
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+    const botoes = [
+      document.getElementById('btn-ebook'),
+      document.getElementById('btn-planilhas2'),
+      document.getElementById('btn-planilhas3')
+    ];
+    botoes.forEach(btn => {
+      if (btn) {
+        btn.disabled = false;
+        // recupera o texto original
+        if (btn.id === 'btn-ebook') btn.innerHTML = "Comprar";
+        if (btn.id === 'btn-planilhas2') btn.innerHTML = "Comprar";
+        if (btn.id === 'btn-planilhas3') btn.innerHTML = "Comprar";
+      }
+    });
+  }
+});
