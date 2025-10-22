@@ -39,7 +39,7 @@
 </section>
 
 <!-- =========================
-     Benefícios (cards)
+     Benefícios
 ========================= -->
 <section class="py-20 bg-gray-50 text-center">
   <div class="container mx-auto px-4">
@@ -99,7 +99,7 @@
 </section>
 
 <!-- =========================
-     Planos (Stripe)
+     Planos
 ========================= -->
 <section class="py-20 bg-gray-50 text-gray-900 text-center" id="planos" data-aos="fade-up">
   <h2 class="text-3xl font-bold mb-12">Escolha seu Plano Ideal</h2>
@@ -132,13 +132,13 @@
     <div class="card selo-completo border-2 border-red-600 p-6 rounded-xl shadow-md relative">
       <div class="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold">Vagas Limitadas!</div>
       <h3 class="font-bold mb-4">3 Planilhas + Acompanhamento</h3>
-      <p class="text-gray-500 line-through mb-2">R$129,90</p>
-      <p class="text-indigo-600 text-2xl font-bold mb-2">R$69,97</p>
-      <p class="text-green-500 font-semibold mb-4">Economize R$59,93!</p>
+      <p class="text-gray-500 line-through mb-2">R$99,90</p>
+      <p class="text-indigo-600 text-2xl font-bold mb-2">R$59,97</p>
+      <p class="text-green-500 font-semibold mb-4">Economize R$39,93!</p>
       <ul class="text-left space-y-2 mb-6">
         <li>✅ eBook grátis</li>
         <li>✅ 3 Planilhas completas</li>
-        <li>✅ Suporte e acompanhamento online</li>
+        <li>✅ Acompanhamento profissional</li>
       </ul>
       <button id="btn-planilhas3" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition">Comprar</button>
     </div>
@@ -147,46 +147,47 @@
 </section>
 
 <!-- =========================
-     Depoimentos
+     Depoimentos / Comentários
 ========================= -->
-<section class="py-20 bg-gray-100 text-gray-900 text-center" id="depoimentos" data-aos="fade-up">
-  <h2 class="text-3xl font-bold mb-12">O que nossos alunos dizem</h2>
+<section class="py-20 bg-gray-50 text-gray-900 text-center" data-aos="fade-up">
+  <h2 class="text-3xl font-bold mb-8">O que nossos alunos dizem</h2>
 
-  <!-- Login Google / Logout -->
+  <div id="msg-login" class="mb-4 font-semibold"></div>
+
+  <!-- Botões login/logout -->
   <div class="mb-6">
-    <button id="btn-google-login" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-400 transition">Login com Google</button>
-    <button id="btn-logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-400 transition hidden">Logout</button>
-    <p id="msg-login" class="mt-2 font-semibold"></p>
+    <button id="btn-google-login" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition">Login com Google</button>
+    <button id="btn-logout" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500 transition hidden">Logout</button>
   </div>
 
-  <!-- Formulário de comentário -->
-  <form id="form-depoimento" class="flex flex-col items-center gap-4 hidden">
-    <textarea id="comentario" rows="3" class="w-full max-w-xl p-2 border rounded" placeholder="Escreva seu comentário"></textarea>
-    <div class="flex gap-1 justify-center">
-      <span class="estrela text-2xl text-gray-300 cursor-pointer" data-valor="1">★</span>
-      <span class="estrela text-2xl text-gray-300 cursor-pointer" data-valor="2">★</span>
-      <span class="estrela text-2xl text-gray-300 cursor-pointer" data-valor="3">★</span>
-      <span class="estrela text-2xl text-gray-300 cursor-pointer" data-valor="4">★</span>
-      <span class="estrela text-2xl text-gray-300 cursor-pointer" data-valor="5">★</span>
+  <!-- Formulário de envio -->
+  <form id="form-depoimento" class="flex flex-col items-center mb-6 hidden">
+    <textarea id="comentario" rows="3" placeholder="Deixe seu depoimento..." class="w-full max-w-xl p-3 border rounded-lg mb-2"></textarea>
+    <div class="flex mb-2">
+      <span class="estrela cursor-pointer text-2xl text-gray-300" data-valor="1">★</span>
+      <span class="estrela cursor-pointer text-2xl text-gray-300" data-valor="2">★</span>
+      <span class="estrela cursor-pointer text-2xl text-gray-300" data-valor="3">★</span>
+      <span class="estrela cursor-pointer text-2xl text-gray-300" data-valor="4">★</span>
+      <span class="estrela cursor-pointer text-2xl text-gray-300" data-valor="5">★</span>
     </div>
-    <button type="submit" class="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 transition">Enviar</button>
-    <div id="feedback-comentario" class="text-sm mt-2"></div>
+    <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-400 transition">Enviar</button>
+    <div id="feedback-comentario" class="mt-2"></div>
   </form>
 
-  <!-- Lista de comentários -->
-  <div id="lista-depoimentos" class="max-w-3xl mx-auto mt-12 space-y-4"></div>
+  <!-- Lista de depoimentos -->
+  <div id="lista-depoimentos" class="max-w-3xl mx-auto"></div>
 </section>
 
 <!-- =========================
-     Modal para editar comentário
+     MODAL DE EDIÇÃO DE COMENTÁRIO
 ========================= -->
 <div id="modal-editar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-  <div class="bg-white rounded-lg p-6 w-full max-w-md relative">
-    <h3 class="font-bold text-xl mb-4">Editar Comentário</h3>
-    <textarea id="modal-texto" rows="4" class="w-full p-2 border rounded mb-4"></textarea>
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+    <h3 class="text-xl font-bold mb-4">Editar Comentário</h3>
+    <textarea id="modal-textarea" rows="4" class="w-full p-3 border rounded mb-4"></textarea>
     <div class="flex justify-end gap-2">
-      <button id="modal-cancelar" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition">Cancelar</button>
-      <button id="modal-salvar" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400 transition">Salvar</button>
+      <button id="modal-cancel" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-200 transition">Cancelar</button>
+      <button id="modal-save" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-400 transition">Salvar</button>
     </div>
   </div>
 </div>
@@ -194,12 +195,12 @@
 <!-- =========================
      Scripts
 ========================= -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
 <script src="script.js"></script>
+
 </body>
 </html>

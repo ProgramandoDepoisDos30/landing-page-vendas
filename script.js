@@ -5,8 +5,9 @@
 // - Depoimentos com Firestore (listagem em tempo real via onSnapshot, sem duplicidade)
 // - Login com Google (Firebase Auth)
 // - Envio de depoimentos (apenas para usuários logados)
-// - Edição/Exclusão de comentários (apenas pelo próprio autor, com modal)
-// - Stripe Checkout (criarCheckout mantém a mesma interface que você já usa)
+// - Edição/Exclusão de comentários (apenas pelo próprio autor)
+// - Modal de edição de comentário
+// - Stripe Checkout
 // - Comentários linha a linha para estudo
 // ===================================================================================
 
@@ -24,16 +25,16 @@ const msgLogin = document.getElementById('msg-login');
 
 // Modal
 const modal = document.getElementById('modal-editar');
-const modalTextarea = document.getElementById('modal-texto');
-const modalCancelar = document.getElementById('modal-cancelar');
-const modalSalvar = document.getElementById('modal-salvar');
-let editarDocId = null; // guarda id do comentário sendo editado
+const modalTextarea = document.getElementById('modal-textarea');
+const modalCancel = document.getElementById('modal-cancel');
+const modalSave = document.getElementById('modal-save');
 
 // -----------------------
 // Variáveis internas / controle
 // -----------------------
 let estrelasSelecionadas = 0;           
 let unsubscribeComments = null;        
+let editarDocId = null; // Guarda o id do comentário que está sendo editado
 
 // -----------------------
 // CONTADOR PERSISTENTE (suas fases 1 e 2)
@@ -42,6 +43,7 @@ const tempoFase1 = 2*3600 + 59*60 + 59;
 const tempoFase2 = 9*60 + 59;           
 
 const contadorKey = 'contadorOficial';
+
 let estado = JSON.parse(localStorage.getItem(contadorKey)) || { fase: 1, segundosRestantes: tempoFase1 };
 
 function formatTime(totalSegundos) {
@@ -79,7 +81,7 @@ function atualizarContador() {
 }
 
 let interval = setInterval(atualizarContador, 1000);
-atualizarContador(); 
+atualizarContador();
 
 // -----------------------
 // LÓGICA DAS ESTRELAS
@@ -104,7 +106,7 @@ estrelasNodes.forEach(star => {
 // -----------------------
 function subscribeToComments() {
   if (typeof unsubscribeComments === 'function') {
-    unsubscribeComments(); 
+    unsubscribeComments();
     unsubscribeComments = null;
   }
 
@@ -112,12 +114,11 @@ function subscribeToComments() {
     .orderBy("criadoEm", "desc")
     .onSnapshot(snapshot => {
       if (!listaDepoimentos) return;
-      listaDepoimentos.innerHTML = ''; 
+      listaDepoimentos.innerHTML = '';
 
       snapshot.forEach(docSnap => {
         const dep = docSnap.data();   
         const id = docSnap.id;        
-
         const div = document.createElement('div');
         div.classList.add('bg-gray-100','p-4','rounded-lg','shadow-md','relative','mb-3');
 
@@ -164,7 +165,7 @@ function subscribeToComments() {
 subscribeToComments();
 
 // -----------------------
-// MODAL DE EDIÇÃO
+// Função: abrir modal de edição
 // -----------------------
 function abrirModalEditar(docId, textoAtual) {
   editarDocId = docId;
@@ -173,25 +174,31 @@ function abrirModalEditar(docId, textoAtual) {
   modalTextarea.focus();
 }
 
-modalCancelar.addEventListener('click', () => {
+// Cancelar edição
+modalCancel.addEventListener('click', () => {
   modal.classList.add('hidden');
   editarDocId = null;
 });
 
-modalSalvar.addEventListener('click', async () => {
-  const textoLimpo = modalTextarea.value.trim();
-  if (!textoLimpo) { alert("Comentário não pode ficar vazio."); return; }
+// Salvar edição
+modalSave.addEventListener('click', async () => {
+  const novoTexto = modalTextarea.value.trim();
+  if (!novoTexto) {
+    alert("Comentário não pode ficar vazio.");
+    return;
+  }
 
   try {
-    await db.collection("comentarios").doc(editarDocId).update({ comentario: textoLimpo });
+    await db.collection("comentarios").doc(editarDocId).update({ comentario: novoTexto });
     feedbackDiv.textContent = "Comentário atualizado com sucesso!";
     feedbackDiv.className = 'text-green-600 font-semibold mt-2';
     setTimeout(() => { feedbackDiv.textContent = ''; feedbackDiv.className = ''; }, 2500);
+
     modal.classList.add('hidden');
     editarDocId = null;
-  } catch(err) {
-    console.error("Erro ao salvar edição:", err);
-    alert("Erro ao atualizar comentário. Veja console.");
+  } catch (err) {
+    console.error("Erro ao atualizar comentário:", err);
+    alert("Erro ao atualizar comentário. Verifique o console.");
   }
 });
 
@@ -252,7 +259,6 @@ formDepoimento?.addEventListener('submit', async (e) => {
 
     feedbackDiv.textContent = "Comentário enviado com sucesso!";
     feedbackDiv.classList.add('text-green-600','font-semibold','mt-2');
-
   } catch (err) {
     console.error("Erro ao enviar comentário:", err);
     feedbackDiv.textContent = "Erro ao enviar comentário.";
@@ -261,7 +267,7 @@ formDepoimento?.addEventListener('submit', async (e) => {
 });
 
 // -----------------------
-// Firebase Auth (Google only)
+// Firebase Auth (Google)
 // -----------------------
 btnGoogle?.addEventListener('click', () => {
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -320,27 +326,20 @@ const STRIPE_PUBLISHABLE_KEY = "pk_live_51Rs9Bm2Lo3O3SUleAwr1Vbn1B6mdomDNnTIUHP2
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
 async function criarCheckout(produto, btn) {
-  if (!stripe) {
-    alert('Stripe não inicializado.');
-    return;
-  }
-
+  if (!stripe) { alert('Stripe não inicializado.'); return; }
   btn.disabled = true;
   const originalText = btn.innerHTML;
   btn.innerHTML = "Redirecionando...";
-
   try {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ produto })
     });
-
     if (!res.ok) {
       const err = await res.json().catch(() => ({ message: res.statusText }));
       throw new Error(err.error || err.message || 'Erro ao criar sessão de checkout');
     }
-
     const data = await res.json();
     if (!data.id) throw new Error('Resposta inválida do servidor');
 
