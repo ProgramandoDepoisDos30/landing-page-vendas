@@ -40,7 +40,7 @@ export default async function handler(req, res) {
 
     console.log("💳 Criando sessão Stripe com priceId:", precoId);
 
-    // ✅ Adicionando metadata para identificar o produto no webhook
+    // ✅ Criando sessão de checkout com coleta de nome e CPF
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
@@ -50,15 +50,44 @@ export default async function handler(req, res) {
           quantity: 1,
         },
       ],
-      // URLs de sucesso e cancelamento específicas por produto
+      // URLs de sucesso e cancelamento
       success_url: `${req.headers.origin}/obrigado-${produto}.html`,
       cancel_url: `${req.headers.origin}/?canceled=true`,
 
-      // 🔥 METADATA - Aqui adicionamos o produto
+      // 🔥 Coleta de informações adicionais do cliente
+      billing_address_collection: "required", // Solicita endereço e nome do cliente
+      customer_creation: "always", // Cria o cliente na Stripe
+
+
+      // Campos adicionais a serem solicitados no checkout
+      custom_fields: [
+        {
+          key: "cpf",
+          label: {
+            type: "custom",
+            custom: "CPF"
+          },
+          type: "text",
+          optional: false, // CPF obrigatório
+          text: {
+            minimum_length: 11,
+            maximum_length: 14
+          }
+        }
+      ],
+
+      // Coletar nome e email
+      customer_details: {
+        name: "required",
+        email: "required",
+      },
+
+      // 🔥 Metadata para rastrear o produto
       metadata: {
         produto: produto
       }
     });
+
 
     console.log("✅ Sessão criada com sucesso:", session.id);
     return res.status(200).json({ id: session.id });

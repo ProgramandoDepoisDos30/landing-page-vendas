@@ -43,6 +43,7 @@ export default async function handler(req, res) {
     const email = session.customer_details?.email || '';
     const telefone = session.customer_details?.phone || '';
     const produto = session.metadata?.produto || 'produto desconhecido';
+    const cpf = session.custom_fields?.find(field => field.key === "cpf")?.text?.value || "";
     const dataCompra = new Date(session.created * 1000).toLocaleString();
 
     console.log(`📩 Compra registrada: ${nome} - ${email} - ${produto}`);
@@ -58,6 +59,7 @@ export default async function handler(req, res) {
             nome,
             email,
             telefone,
+            cpf, // ✅ Adicionado aqui
             produto,
             dataCompra,
             status: "Pendente"
