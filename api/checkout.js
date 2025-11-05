@@ -1,19 +1,23 @@
+// ✅ Importa o SDK da Stripe e o dotenv para acessar variáveis de ambiente
 import Stripe from "stripe";
-import 'dotenv/config';
+import "dotenv/config";
 
-// Inicializa Stripe com sua chave secreta
+// ✅ Verifica se a variável de ambiente com a chave secreta da Stripe está configurada
 if (!process.env.CHAVE_SECRETA_DA_FAIXA) {
   console.error("❌ Variável de ambiente CHAVE_SECRETA_DA_FAIXA não encontrada!");
-  throw new Error("⚠️ Variável CHAVE_SECRETA_DA_FAIXA não encontrada no ambiente do Vercel!");
+  throw new Error("⚠️ Variável CHAVE_SECRETA_DA_FAIXA não encontrada no ambiente!");
 }
 
+// ✅ Inicializa a Stripe com sua chave secreta
 const stripe = new Stripe(process.env.CHAVE_SECRETA_DA_FAIXA, {
   apiVersion: "2023-10-16",
 });
 
+// ✅ Função principal que será chamada quando o endpoint /api/checkout for acessado
 export default async function handler(req, res) {
   console.log("🔹 Função /api/checkout chamada");
 
+  // Permite apenas requisições POST (segurança)
   if (req.method !== "POST") {
     console.warn("⚠️ Método não permitido:", req.method);
     res.setHeader("Allow", "POST");
@@ -21,17 +25,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Captura o produto enviado pelo front-end (script.js)
+    // ✅ Captura o produto enviado pelo front-end (via script.js)
     const { produto } = req.body;
     console.log("📦 Produto recebido:", produto);
 
-    // Mapeamento dos produtos existentes
+    // ✅ Mapeamento dos produtos e seus IDs de preço cadastrados na Stripe
     const produtos = {
       ebook: "price_1SAys72Lo3O3SUleUS7mgE0f",
       planilhas2: "price_1SAywm2Lo3O3SUleJv3T1GDO",
       planilhas3: "price_1SAyuB2Lo3O3SUleD4JBcRfe",
     };
 
+    // Busca o ID de preço do produto selecionado
     const precoId = produtos[produto];
     if (!precoId) {
       console.error("❌ Produto inválido:", produto);
@@ -40,62 +45,62 @@ export default async function handler(req, res) {
 
     console.log("💳 Criando sessão Stripe com priceId:", precoId);
 
-    // ✅ Criando sessão de checkout com coleta de nome e CPF
+    // ✅ Cria a sessão de checkout na Stripe
     const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
+      mode: "payment", // Tipo de transação (pagamento único)
+      payment_method_types: ["card"], // Aceita pagamento por cartão
+
+      // ✅ Produto selecionado e quantidade
       line_items: [
         {
           price: precoId,
           quantity: 1,
         },
       ],
-      // URLs de sucesso e cancelamento
+
+      // ✅ URLs de redirecionamento após o pagamento
       success_url: `${req.headers.origin}/obrigado-${produto}.html`,
       cancel_url: `${req.headers.origin}/?canceled=true`,
 
-      // 🔥 Coleta de informações adicionais do cliente
-      billing_address_collection: "required", // Solicita endereço e nome do cliente
-      customer_creation: "always", // Cria o cliente na Stripe
+      // ✅ Coleta obrigatória do endereço de cobrança (inclui nome completo)
+      billing_address_collection: "required",
 
+      // ✅ Garante que o cliente será criado na Stripe (para registro e histórico)
+      customer_creation: "always",
 
-      // Campos adicionais a serem solicitados no checkout
+      // ✅ Campo personalizado para CPF
+      // Este campo aparece automaticamente no checkout da Stripe
       custom_fields: [
         {
           key: "cpf",
-          label: {
-            type: "custom",
-            custom: "CPF"
-          },
+          label: { type: "custom", custom: "CPF" },
           type: "text",
-          optional: false, // CPF obrigatório
+          optional: false, // obrigatório
           text: {
             minimum_length: 11,
-            maximum_length: 14
-          }
-        }
+            maximum_length: 14,
+          },
+        },
       ],
 
-      // Coletar nome e email
-      customer_details: {
-        name: "required",
-        email: "required",
-      },
+      // ✅ Coleta de email — a Stripe faz isso automaticamente se não estiver definido
+      customer_email: undefined,
 
-      // 🔥 Metadata para rastrear o produto
+      // ✅ Metadados para rastrear internamente o produto comprado
       metadata: {
-        produto: produto
-      }
+        produto: produto,
+      },
     });
 
-
     console.log("✅ Sessão criada com sucesso:", session.id);
+
+    // ✅ Retorna o ID da sessão para o front-end redirecionar o cliente
     return res.status(200).json({ id: session.id });
   } catch (err) {
     console.error("❌ Erro ao criar sessão de checkout:", err);
     return res.status(500).json({
       error: "Erro ao criar sessão de checkout",
-      detalhes: err.message
+      detalhes: err.message,
     });
   }
 }
