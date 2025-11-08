@@ -63,6 +63,20 @@ export default async function handler(req, res) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  // ✅ Evita processar o mesmo evento duas vezes (duplicados)
+  const eventId = event.id;
+
+  // 🔹 Mantém um cache simples em memória para detectar duplicatas
+  global.processedEvents = global.processedEvents || new Set();
+
+  if (global.processedEvents.has(eventId)) {
+    console.warn(`⚠️ Evento duplicado ignorado: ${eventId}`);
+    return res.status(200).json({ received: true, duplicate: true });
+  }
+
+  // 🔹 Marca o evento como processado
+  global.processedEvents.add(eventId);
+
   // 🎯 Evento principal — quando o pagamento é confirmado com sucesso
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
