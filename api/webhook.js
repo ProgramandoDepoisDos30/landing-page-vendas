@@ -87,7 +87,7 @@ export default async function handler(req, res) {
     // ✅ 1️⃣ Envia os dados do cliente para o Google Sheets via Google Apps Script
     try {
       const resposta = await fetch(
-        "https://script.google.com/macros/s/AKfycbwviJrAjXfAS-j45XhuddcAeOep3jqAZgdM--s9Y77SCOoDG3ZYKBn_n1_JSVgl10EydA/exec",
+        "https://script.google.com/macros/s/AKfycbz3cKceqJWqIK_0tHKestltlLb1T9-QFX5ryTeafpIEyUU5Ke5ko-OBdmZg-ogltnsBHw/exec",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
