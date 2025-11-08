@@ -2,7 +2,8 @@
 import Stripe from "stripe";
 import "dotenv/config";
 
-// ✅ Função alternativa para capturar o corpo bruto da requisição (substitui "micro")
+// ✅ Função auxiliar para capturar o corpo bruto da requisição
+// (necessária para validar a assinatura do webhook corretamente)
 const buffer = async (readable) => {
   const chunks = [];
   for await (const chunk of readable) {
@@ -11,41 +12,44 @@ const buffer = async (readable) => {
   return Buffer.concat(chunks);
 };
 
-// ✅ Configuração necessária para o Stripe Webhook
-// O corpo da requisição precisa ser lido como "raw" (não JSON parseado)
+// ✅ Configuração obrigatória do Next.js para webhooks do Stripe
+// Desativa o bodyParser padrão, pois precisamos ler o corpo bruto
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-// ✅ Inicializa o cliente Stripe com a chave secreta
+// ✅ Verifica se a chave secreta da Stripe foi configurada corretamente
 if (!process.env.STRIPE_SECRET_KEY) {
   console.error("❌ ERRO: STRIPE_SECRET_KEY não definida no ambiente!");
-  throw new Error("⚠️ Configure STRIPE_SECRET_KEY no .env.local ou nas variáveis da Vercel.");
+  throw new Error("⚠️ Configure STRIPE_SECRET_KEY nas variáveis da Vercel.");
 }
 
+// ✅ Inicializa o cliente da Stripe com a versão mais recente da API
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-10-16",
 });
 
-// ✅ Verifica se o segredo do endpoint (webhook) foi definido
+// ✅ Verifica se o segredo do Webhook foi configurado corretamente
 if (!process.env.STRIPE_WEBHOOK_SECRET) {
   console.error("❌ ERRO: STRIPE_WEBHOOK_SECRET não definido!");
-  throw new Error("⚠️ Configure STRIPE_WEBHOOK_SECRET no .env.local ou nas variáveis da Vercel.");
+  throw new Error("⚠️ Configure STRIPE_WEBHOOK_SECRET nas variáveis da Vercel.");
 }
 
-// ⚙️ Seu segredo do endpoint do webhook (copiado do painel da Stripe)
+// ⚙️ Segredo do endpoint do webhook (copiado do painel da Stripe)
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// ✅ Função principal executada quando a Stripe envia um evento
+// ✅ Função principal: é executada automaticamente sempre que o Stripe envia um evento
 export default async function handler(req, res) {
+  // ⚠️ Apenas aceita requisições do tipo POST
   if (req.method !== "POST") {
     console.warn("⚠️ Método não permitido:", req.method);
     return res.status(405).end("Método não permitido");
   }
 
   let event;
+
   try {
     // 🔹 Captura o corpo bruto da requisição
     const buf = await buffer(req);
@@ -59,28 +63,28 @@ export default async function handler(req, res) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // 🎯 Evento principal — checkout concluído com sucesso
+  // 🎯 Evento principal — quando o pagamento é confirmado com sucesso
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
 
-    // ✅ Coleta as informações principais da sessão
+    // ✅ Coleta as informações principais do pagamento
     const nome = session.customer_details?.name || "Cliente não informado";
     const email = session.customer_details?.email || "";
     const telefone = session.customer_details?.phone || "";
     const produto = session.metadata?.produto || "Produto desconhecido";
 
-    // ✅ Busca o campo CPF (personalizado no checkout)
+    // ✅ Captura o campo CPF personalizado do checkout
     const cpf =
       session.custom_fields?.find((field) => field.key === "cpf")?.text?.value || "";
 
-    // ✅ Converte a data de criação (timestamp Unix → formato legível)
+    // ✅ Converte a data da compra (timestamp UNIX → formato legível)
     const dataCompra = new Date(session.created * 1000).toLocaleString("pt-BR", {
       timeZone: "America/Sao_Paulo",
     });
 
     console.log(`✅ Pagamento confirmado: ${nome} - ${produto} - ${email}`);
 
-    // ✅ Envio dos dados para o Google Sheets via Google Apps Script
+    // ✅ 1️⃣ Envia os dados do cliente para o Google Sheets via Google Apps Script
     try {
       const resposta = await fetch(
         "https://script.google.com/macros/s/AKfycbwviJrAjXfAS-j45XhuddcAeOep3jqAZgdM--s9Y77SCOoDG3ZYKBn_n1_JSVgl10EydA/exec",
@@ -94,7 +98,7 @@ export default async function handler(req, res) {
             cpf,
             produto,
             dataCompra,
-            status: "Pendente", // pode ser atualizado para "Pago" após validação extra
+            status: "Pendente", // pode ser atualizado para "Pago" posteriormente
           }),
         }
       );
@@ -105,8 +109,33 @@ export default async function handler(req, res) {
     } catch (err) {
       console.error("❌ Erro ao enviar dados ao Google Sheets:", err.message);
     }
+
+    // ✅ 2️⃣ Envia o e-mail automático de confirmação ao cliente
+    // (requer a variável EMAIL_API_URL configurada na Vercel)
+    try {
+      if (!process.env.EMAIL_API_URL) {
+        throw new Error("EMAIL_API_URL não configurada no ambiente.");
+      }
+
+      const emailResponse = await fetch(process.env.EMAIL_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome,
+          email,
+          produto,
+          dataCompra,
+        }),
+      });
+
+      if (!emailResponse.ok) throw new Error("Falha ao enviar o e-mail automático");
+
+      console.log(`📧 E-mail automático enviado para ${email}`);
+    } catch (err) {
+      console.error("❌ Erro ao enviar e-mail automático:", err.message);
+    }
   }
 
-  // ✅ Responde 200 para informar à Stripe que o evento foi recebido
+  // ✅ Envia resposta 200 para informar à Stripe que o evento foi recebido corretamente
   res.status(200).json({ received: true });
 }
