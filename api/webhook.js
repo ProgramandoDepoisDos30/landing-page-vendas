@@ -1,7 +1,15 @@
 // ✅ Importa dependências essenciais
-import { buffer } from "micro";
 import Stripe from "stripe";
 import "dotenv/config";
+
+// ✅ Função alternativa para capturar o corpo bruto da requisição (substitui "micro")
+const buffer = async (readable) => {
+  const chunks = [];
+  for await (const chunk of readable) {
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks);
+};
 
 // ✅ Configuração necessária para o Stripe Webhook
 // O corpo da requisição precisa ser lido como "raw" (não JSON parseado)
